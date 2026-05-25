@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registrati — Elystria · La Fiamma Primordiale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nero:#0a0810;
+    --oro:#e6c068;
+    --oro-chiaro:#f8e4b0;
+    --oro-scuro:#9c7a32;
+    --fiamma:#ffce4d;
+    --testo:#f0ead8;
+    --testo-soft:#c4baa4;
+    --bordo:rgba(230,192,104,0.25);
+    --viola:#8b5cf6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--nero);color:var(--testo);
+    font-family:'Cormorant Garamond',serif;font-size:18px;
+    overflow-x:hidden;line-height:1.6;
+  }
+
+  /* ====== MENU FISSO ====== */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 42px;transition:all .4s ease;
+  }
+  header.scrolled{background:rgba(10,8,16,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--bordo);padding:12px 42px}
+  .brand{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.18em;color:var(--oro-chiaro);text-decoration:none;text-shadow:0 0 18px rgba(230,192,104,0.4)}
+  nav{display:flex;align-items:center;gap:6px}
+  nav a,.dropdown-btn{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--testo-soft);text-decoration:none;padding:10px 14px;background:none;border:none;cursor:pointer;position:relative;transition:color .3s}
+  nav a:hover,.dropdown-btn:hover{color:var(--oro-chiaro)}
+  nav a.active{color:var(--oro-chiaro)}
+  nav a::after{content:'';position:absolute;left:14px;right:14px;bottom:4px;height:1px;background:var(--oro);transform:scaleX(0);transition:transform .3s}
+  nav a:hover::after,nav a.active::after{transform:scaleX(1)}
+  .dropdown{position:relative}
+  .dropdown-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(13,11,20,0.98);border:1px solid var(--bordo);border-radius:4px;min-width:190px;padding:8px 0;opacity:0;visibility:hidden;transition:all .3s;box-shadow:0 20px 50px rgba(0,0,0,0.6)}
+  .dropdown:hover .dropdown-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(4px)}
+  .dropdown-menu a{display:block;padding:10px 22px;text-align:left}
+  .dropdown-menu a::after{display:none}
+  .dropdown-menu a:hover{background:rgba(230,192,104,0.08)}
+  .lang{display:flex;gap:2px;margin-left:14px;border:1px solid var(--bordo);border-radius:3px;overflow:hidden}
+  .lang button{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.1em;background:none;border:none;color:var(--testo-soft);padding:7px 11px;cursor:pointer;transition:all .25s}
+  .lang button.active{background:var(--oro);color:var(--nero);font-weight:700}
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .burger span{width:26px;height:2px;background:var(--oro-chiaro);transition:.3s}
+
+  /* ====== HERO LANDING ====== */
+  .hero{position:relative;min-height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:120px 24px 80px}
+  .hero-bg{position:absolute;inset:-8%;background-image:url(assets/img/keyart.jpg);background-size:cover;background-position:center 30%;transform:scale(1.08);filter:saturate(1.05) brightness(.7)}
+  .hero-glow{position:absolute;inset:0;z-index:2;background:
+      radial-gradient(ellipse 70% 80% at 50% 30%, rgba(255,206,77,0.22), transparent 55%),
+      radial-gradient(ellipse 120% 70% at 50% 100%, rgba(10,8,16,0.97), transparent 60%),
+      linear-gradient(180deg, rgba(10,8,16,0.75) 0%, rgba(10,8,16,0.35) 30%, rgba(10,8,16,0.85) 100%)}
+  #emberLayer{position:absolute;inset:0;z-index:3;pointer-events:none}
+  .ember{position:absolute;border-radius:50%;background:var(--fiamma);box-shadow:0 0 8px 2px rgba(255,206,77,0.7);opacity:0;animation:rise linear infinite}
+  @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}12%{opacity:1}88%{opacity:.6}100%{transform:translateY(-105vh) translateX(var(--drift));opacity:0}}
+
+  .hero-inner{position:relative;z-index:6;width:100%;max-width:1080px;display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
+  .hero-copy{opacity:0;animation:fadeUp 1s ease .2s forwards}
+  .eyebrow{font-family:'Cinzel',serif;font-size:.74rem;letter-spacing:.4em;text-transform:uppercase;color:var(--oro-chiaro);margin-bottom:20px;text-shadow:0 2px 14px rgba(0,0,0,.8)}
+  .hero-copy h1{font-family:'Cinzel',serif;font-weight:800;font-size:clamp(2.2rem,5vw,3.6rem);color:var(--oro-chiaro);line-height:1.06;letter-spacing:.02em;text-shadow:0 0 50px rgba(255,206,77,0.35),0 2px 14px rgba(0,0,0,.7)}
+  .hero-copy h1 .flame{color:var(--fiamma)}
+  .hero-copy .lead{font-size:1.28rem;color:var(--testo);margin-top:24px;max-width:520px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+
+  /* lista premi */
+  .rewards{margin-top:34px;display:flex;flex-direction:column;gap:16px}
+  .reward{display:flex;gap:16px;align-items:flex-start}
+  .reward .r-icon{flex-shrink:0;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;border:1px solid var(--bordo);background:rgba(255,206,77,0.08)}
+  .reward .r-icon.figure{border-color:var(--fiamma);background:rgba(255,206,77,0.16);box-shadow:0 0 26px rgba(255,206,77,0.25)}
+  .reward h3{font-family:'Cinzel',serif;font-weight:600;font-size:1.02rem;letter-spacing:.06em;color:var(--oro-chiaro)}
+  .reward p{font-size:1.02rem;color:var(--testo-soft);line-height:1.45}
+
+  /* ====== CARD FORM ====== */
+  .form-card{position:relative;background:rgba(13,11,20,0.92);border:1px solid var(--bordo);border-radius:14px;padding:42px 36px;box-shadow:0 40px 100px rgba(0,0,0,0.6),0 0 60px rgba(230,192,104,0.08);backdrop-filter:blur(6px);opacity:0;animation:fadeUp 1s ease .5s forwards}
+  .form-card .fc-sigil{position:absolute;top:-26px;left:50%;transform:translateX(-50%);width:52px;height:52px;border-radius:50%;background:var(--nero);border:1px solid var(--oro);display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 0 30px rgba(255,206,77,0.3)}
+  .form-card h2{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;color:var(--oro-chiaro);text-align:center;letter-spacing:.04em;margin-bottom:8px}
+  .form-card .fc-sub{text-align:center;color:var(--testo-soft);font-style:italic;margin-bottom:28px}
+  .field{margin-bottom:18px}
+  .field label{display:block;font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--oro);margin-bottom:8px}
+  .field input{width:100%;background:rgba(10,8,16,0.7);border:1px solid var(--bordo);border-radius:6px;padding:14px 16px;color:var(--testo);font-family:'Cormorant Garamond',serif;font-size:1.1rem;transition:border-color .3s,box-shadow .3s}
+  .field input:focus{outline:none;border-color:var(--oro);box-shadow:0 0 0 3px rgba(230,192,104,0.12)}
+  .field input::placeholder{color:var(--oro-scuro);opacity:.7}
+  .field input.invalid{border-color:#e0556b;box-shadow:0 0 0 3px rgba(224,85,107,0.12)}
+  .submit-btn{width:100%;font-family:'Cinzel',serif;font-size:.84rem;letter-spacing:.16em;text-transform:uppercase;padding:16px;border:1px solid var(--oro);color:var(--nero);background:var(--oro);cursor:pointer;transition:all .3s;font-weight:700;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px}
+  .submit-btn:hover:not(:disabled){background:var(--fiamma);box-shadow:0 0 40px rgba(255,206,77,0.5)}
+  .submit-btn:disabled{opacity:.6;cursor:wait}
+  .spinner{width:16px;height:16px;border:2px solid rgba(10,8,16,0.35);border-top-color:var(--nero);border-radius:50%;animation:spin .7s linear infinite;display:none}
+  .submit-btn.loading .spinner{display:inline-block}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .fc-privacy{font-size:.85rem;color:var(--oro-scuro);text-align:center;margin-top:16px;font-style:italic;opacity:.8;line-height:1.4}
+
+  /* messaggi esito */
+  .msg{margin-top:18px;border-radius:8px;padding:16px 18px;font-size:1.02rem;display:none;line-height:1.45}
+  .msg.show{display:block;animation:fadeUp .5s ease}
+  .msg.error{border:1px solid #e0556b;background:rgba(224,85,107,0.1);color:#ffb3bf}
+  .msg-result{display:none;text-align:center;animation:fadeUp .6s ease}
+  .msg-result.show{display:block}
+  .msg-result .mr-seal{font-size:3rem;margin-bottom:14px}
+  .msg-result h2{font-family:'Cinzel',serif;font-weight:700;font-size:1.55rem;color:var(--oro-chiaro);letter-spacing:.04em;margin-bottom:14px}
+  .msg-result p{color:var(--testo-soft);margin-bottom:10px}
+  .msg-result .mr-email{color:var(--oro-chiaro);font-style:italic}
+  .msg-result .mr-cta{display:inline-block;margin-top:18px;font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;padding:13px 26px;border:1px solid var(--oro);color:var(--oro-chiaro);background:rgba(255,206,77,0.1);text-decoration:none;transition:all .3s}
+  .msg-result .mr-cta:hover{background:var(--oro);color:var(--nero)}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ====== SEZIONE SHOP TEASER ====== */
+  .shop-teaser{position:relative;z-index:2;padding:120px 24px;text-align:center;max-width:900px;margin:0 auto}
+  .shop-teaser h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.9rem,4.5vw,2.8rem);color:var(--oro-chiaro);letter-spacing:.04em;margin-bottom:18px}
+  .shop-teaser p{font-size:1.2rem;color:var(--testo-soft);max-width:600px;margin:0 auto 36px}
+  .teaser-figs{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+  .teaser-fig{width:120px;border-radius:8px;overflow:hidden;border:1px solid var(--bordo);transition:transform .4s,box-shadow .4s,border-color .4s}
+  .teaser-fig:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,0.5),0 0 30px rgba(230,192,104,0.18);border-color:var(--oro)}
+  .teaser-fig img{width:100%;height:150px;object-fit:cover;object-position:center 14%;display:block}
+  .teaser-fig .tf-name{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.1em;color:var(--oro-chiaro);padding:8px 4px;background:rgba(13,11,20,0.9)}
+  .btn{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;padding:16px 34px;text-decoration:none;cursor:pointer;border:1px solid var(--oro);color:var(--oro-chiaro);background:rgba(255,206,77,0.12);transition:all .4s;display:inline-block}
+  .btn:hover{background:var(--oro);color:var(--nero);box-shadow:0 0 40px rgba(255,206,77,0.5)}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  footer{position:relative;z-index:2;border-top:1px solid var(--bordo);padding:50px 24px 40px;text-align:center;background:rgba(10,8,16,0.7)}
+  footer .f-title{font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.2em;color:var(--oro);margin-bottom:12px}
+  footer p{font-size:.95rem;color:var(--testo-soft);margin:4px 0}
+  footer .placeholder{color:var(--oro-scuro);font-style:italic;opacity:.7}
+
+  @media(max-width:880px){
+    header{padding:14px 20px}
+    nav{position:fixed;top:0;right:-100%;width:78%;max-width:340px;height:100vh;flex-direction:column;align-items:flex-start;gap:0;background:rgba(10,9,16,0.99);backdrop-filter:blur(16px);padding:90px 30px 30px;transition:right .4s ease;border-left:1px solid var(--bordo);overflow-y:auto}
+    nav.open{right:0}
+    nav a,.dropdown-btn{width:100%;padding:14px 0;font-size:.9rem}
+    .dropdown{width:100%}
+    .dropdown-menu{position:static;transform:none;opacity:1;visibility:visible;background:rgba(255,255,255,0.02);border:none;box-shadow:none;max-height:0;overflow:hidden;transition:max-height .3s;padding:0}
+    .dropdown.open-mob .dropdown-menu{max-height:300px;padding:4px 0}
+    .dropdown-menu a{padding-left:20px}
+    .lang{margin:20px 0 0 0}
+    .burger{display:flex;z-index:101}
+    .hero-inner{grid-template-columns:1fr;gap:42px}
+    .hero-copy{order:1}
+    .form-card{order:2}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <a href="index.html" class="brand">ELYSTRIA</a>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="nav">
+    <a href="index.html" class="active" data-it="Registrati" data-en="Sign up">Registrati</a>
+    <a href="shop.html" data-it="Shop" data-en="Shop">Shop</a>
+    <div class="lang">
+      <button id="lang-it" class="active" onclick="setLang('it')">IT</button>
+      <button id="lang-en" onclick="setLang('en')">EN</button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div id="emberLayer"></div>
+
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <div class="eyebrow" data-it="Accesso anticipato · Edizione fondatori" data-en="Early access · Founders edition">Accesso anticipato · Edizione fondatori</div>
+      <h1 data-it="Unisciti ai primi <span class='flame'>portatori della Fiamma</span>" data-en="Join the first <span class='flame'>bearers of the Flame</span>">Unisciti ai primi <span class="flame">portatori della Fiamma</span></h1>
+      <p class="lead" data-it="Registrati con la tua email e ricevi una ricompensa esclusiva dal mondo di Elystria. Le scorte da fondatore sono limitate." data-en="Sign up with your email and receive an exclusive reward from the world of Elystria. Founder stock is limited.">Registrati con la tua email e ricevi una ricompensa esclusiva dal mondo di Elystria. Le scorte da fondatore sono limitate.</p>
+
+      <div class="rewards">
+        <div class="reward">
+          <div class="r-icon figure">🏆</div>
+          <div>
+            <h3 data-it="I primi 50 registrati" data-en="The first 50 to sign up">I primi 50 registrati</h3>
+            <p data-it="Vincono l'action figure da collezione di Zython, il Primo Divoratore." data-en="Win the collector's action figure of Zython, the First Devourer.">Vincono l'action figure da collezione di Zython, il Primo Divoratore.</p>
+          </div>
+        </div>
+        <div class="reward">
+          <div class="r-icon">🎮</div>
+          <div>
+            <h3 data-it="Tutti gli altri" data-en="Everyone else">Tutti gli altri</h3>
+            <p data-it="Ricevono i primi 3 livelli del gioco completamente gratis." data-en="Receive the first 3 levels of the game completely free.">Ricevono i primi 3 livelli del gioco completamente gratis.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="fc-sigil">🔥</div>
+
+      <!-- VISTA FORM -->
+      <div id="formView">
+        <h2 data-it="Reclama la tua ricompensa" data-en="Claim your reward">Reclama la tua ricompensa</h2>
+        <p class="fc-sub" data-it="Inserisci la tua email per iscriverti" data-en="Enter your email to sign up">Inserisci la tua email per iscriverti</p>
+
+        <div class="field">
+          <label for="email" data-it="La tua email" data-en="Your email">La tua email</label>
+          <input type="email" id="email" name="email" autocomplete="email" placeholder="nome@esempio.com" required>
+        </div>
+
+        <button class="submit-btn" id="submitBtn" data-it="Iscrivimi" data-en="Sign me up">
+          <span class="spinner"></span>
+          <span class="btn-label" data-it="Iscrivimi" data-en="Sign me up">Iscrivimi</span>
+        </button>
+
+        <p class="fc-privacy" data-it="Useremo la tua email solo per inviarti la ricompensa. Progetto scolastico dimostrativo." data-en="We'll use your email only to send your reward. Demonstrative school project.">Useremo la tua email solo per inviarti la ricompensa. Progetto scolastico dimostrativo.</p>
+
+        <div class="msg error" id="errMsg"></div>
+      </div>
+
+      <!-- VISTA ESITO (successo) -->
+      <div class="msg-result" id="resultView">
+        <div class="mr-seal" id="resultSeal">🎉</div>
+        <h2 id="resultTitle"></h2>
+        <p id="resultBody"></p>
+        <p data-it="Controlla la tua casella di posta:" data-en="Check your inbox:">Controlla la tua casella di posta:</p>
+        <p class="mr-email" id="resultEmail"></p>
+        <a href="shop.html" class="mr-cta" data-it="Scopri lo shop" data-en="Explore the shop">Scopri lo shop</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="shop-teaser reveal">
+  <h2 data-it="Vuoi tutta la collezione?" data-en="Want the whole collection?">Vuoi tutta la collezione?</h2>
+  <p data-it="Le action figure di Elystria — eroi, Dei caduti e il Divoratore — ti aspettano nello shop ufficiale." data-en="The Elystria action figures — heroes, fallen Gods and the Devourer — await you in the official shop.">Le action figure di Elystria — eroi, Dei caduti e il Divoratore — ti aspettano nello shop ufficiale.</p>
+  <div class="teaser-figs">
+    <div class="teaser-fig"><img src="assets/img/zython.jpg" alt="Zython"><div class="tf-name">Zython</div></div>
+    <div class="teaser-fig"><img src="assets/img/theron3.jpg" alt="Theron"><div class="tf-name">Theron</div></div>
+    <div class="teaser-fig"><img src="assets/img/ophelia.jpg" alt="Ophelia"><div class="tf-name">Ophelia</div></div>
+    <div class="teaser-fig"><img src="assets/img/firyon.jpg" alt="Firyon"><div class="tf-name">Firyon</div></div>
+  </div>
+  <a href="shop.html" class="btn" data-it="Vai allo shop" data-en="Go to the shop">Vai allo shop</a>
+</section>
+
+<footer>
+  <div class="f-title">ELYSTRIA — La Fiamma Primordiale</div>
+  <p class="placeholder" data-it="Nome scuola · Classe · Anno scolastico (da inserire)" data-en="School name · Class · School year (to be added)">Nome scuola · Classe · Anno scolastico (da inserire)</p>
+  <p data-it="Progetto realizzato da Ilaria, Martina e Jolanda" data-en="Project created by Ilaria, Martina and Jolanda">Progetto realizzato da Ilaria, Martina e Jolanda</p>
+</footer>
+
+<script>
+  let currentLang='it';
+
+  /* testi esito tradotti */
+  const RES = {
+    winner:{
+      seal:'🏆',
+      title:{it:'Complimenti, sei tra i primi 50!',en:'Congratulations, you\u2019re in the first 50!'},
+      body:{it:'Hai vinto l\u2019action figure da collezione di Zython, il Primo Divoratore.',en:'You\u2019ve won the collector\u2019s action figure of Zython, the First Devourer.'}
+    },
+    standard:{
+      seal:'🎮',
+      title:{it:'Iscrizione completata!',en:'You\u2019re signed up!'},
+      body:{it:'Hai sbloccato i primi 3 livelli del gioco gratuitamente.',en:'You\u2019ve unlocked the first 3 levels of the game for free.'}
+    }
+  };
+  const ERR = {
+    invalid:{it:'Inserisci un indirizzo email valido.',en:'Please enter a valid email address.'},
+    generic:{it:'Qualcosa è andato storto. Riprova tra poco.',en:'Something went wrong. Please try again shortly.'},
+    network:{it:'Impossibile contattare il server. Controlla la connessione e riprova.',en:'Could not reach the server. Check your connection and try again.'}
+  };
+
+  const emailInput=document.getElementById('email');
+  const submitBtn=document.getElementById('submitBtn');
+  const errMsg=document.getElementById('errMsg');
+  const formView=document.getElementById('formView');
+  const resultView=document.getElementById('resultView');
+
+  function showError(key){
+    errMsg.textContent = ERR[key][currentLang];
+    errMsg.classList.add('show');
+  }
+  function clearError(){ errMsg.classList.remove('show'); emailInput.classList.remove('invalid'); }
+
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+  async function register(){
+    clearError();
+    const email=emailInput.value.trim();
+    if(!validEmail(email)){
+      emailInput.classList.add('invalid');
+      showError('invalid');
+      return;
+    }
+    // stato di caricamento
+    submitBtn.classList.add('loading');
+    submitBtn.disabled=true;
+
+    try{
+      const res = await fetch('/api/register',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email, lang:currentLang})
+      });
+      let data={};
+      try{ data = await res.json(); }catch(e){ data={}; }
+
+      if(!res.ok){
+        showError('generic');
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled=false;
+        return;
+      }
+      // successo: data.winner === true|false
+      const kind = data.winner ? 'winner' : 'standard';
+      showResult(kind, email);
+    }catch(err){
+      showError('network');
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled=false;
+    }
+  }
+
+  function showResult(kind, email){
+    document.getElementById('resultSeal').textContent = RES[kind].seal;
+    const tEl=document.getElementById('resultTitle');
+    const bEl=document.getElementById('resultBody');
+    tEl.setAttribute('data-it',RES[kind].title.it); tEl.setAttribute('data-en',RES[kind].title.en);
+    bEl.setAttribute('data-it',RES[kind].body.it);  bEl.setAttribute('data-en',RES[kind].body.en);
+    tEl.textContent=RES[kind].title[currentLang];
+    bEl.textContent=RES[kind].body[currentLang];
+    document.getElementById('resultEmail').textContent=email;
+    formView.style.display='none';
+    resultView.classList.add('show');
+  }
+
+  submitBtn.addEventListener('click',register);
+  emailInput.addEventListener('keydown',e=>{if(e.key==='Enter')register()});
+  emailInput.addEventListener('input',clearError);
+
+  /* ====== MULTILINGUA ====== */
+  function setLang(lang){
+    currentLang=lang;
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-it]').forEach(el=>{const t=el.getAttribute('data-'+lang);if(t!==null)el.innerHTML=t});
+    document.getElementById('lang-it').classList.toggle('active',lang==='it');
+    document.getElementById('lang-en').classList.toggle('active',lang==='en');
+  }
+
+  /* ====== HEADER / MENU ====== */
+  const header=document.getElementById('header');
+  window.addEventListener('scroll',()=>header.classList.toggle('scrolled',window.scrollY>40));
+  const burger=document.getElementById('burger'),nav=document.getElementById('nav');
+  burger.addEventListener('click',()=>nav.classList.toggle('open'));
+
+  /* EMBERS */
+  const el=document.getElementById('emberLayer');
+  for(let i=0;i<40;i++){
+    const e=document.createElement('div');e.className='ember';
+    const s=Math.random()*3+1.5;e.style.width=s+'px';e.style.height=s+'px';
+    e.style.left=Math.random()*100+'%';e.style.bottom='-10px';
+    e.style.setProperty('--drift',(Math.random()*140-70)+'px');
+    e.style.animationDuration=(Math.random()*14+10)+'s';e.style.animationDelay=(Math.random()*14)+'s';
+    el.appendChild(e);
+  }
+
+  /* REVEAL */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.15});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
