@@ -268,7 +268,8 @@
   const ERR = {
     invalid:{it:'Inserisci un indirizzo email valido.',en:'Please enter a valid email address.'},
     generic:{it:'Qualcosa è andato storto. Riprova tra poco.',en:'Something went wrong. Please try again shortly.'},
-    network:{it:'Impossibile contattare il server. Controlla la connessione e riprova.',en:'Could not reach the server. Check your connection and try again.'}
+    network:{it:'Impossibile contattare il server. Controlla la connessione e riprova.',en:'Could not reach the server. Check your connection and try again.'},
+    sender_not_verified:{it:'Invio non riuscito: il mittente non è ancora verificato. Riprova più tardi.',en:'Sending failed: the sender is not verified yet. Please try again later.'}
   };
 
   const emailInput=document.getElementById('email');
@@ -307,7 +308,8 @@
       try{ data = await res.json(); }catch(e){ data={}; }
 
       if(!res.ok){
-        showError('generic');
+        const code = data && data.error;
+        showError(ERR[code] ? code : 'generic');
         submitBtn.classList.remove('loading');
         submitBtn.disabled=false;
         return;

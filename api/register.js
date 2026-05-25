@@ -1,19 +1,25 @@
 // ============================================================================
-//  ELYSTRIA — Funzione Serverless di registrazione
+//  ELYSTRIA — Funzione Serverless di registrazione (invio email via BREVO)
 //  Percorso: /api/register.js  (Vercel la espone automaticamente su /api/register)
 // ----------------------------------------------------------------------------
 //  COSA FA:
-//   1. Riceve { email, lang } dal form della pagina registrati.html
+//   1. Riceve { email, lang } dal form della pagina index.html (la landing)
 //   2. Decide se l'iscritto è tra i "primi 50" (conteggio FITTIZIO, in memoria)
-//   3. Invia un'email VERA tramite Resend, con testo diverso per vincitore/standard
+//   3. Invia un'email VERA tramite Brevo, con testo diverso per vincitore/standard
 //   4. Risponde al frontend con { ok:true, winner:true|false }
 //
-//  COSA TI SERVE SU VERCEL (vedi FOGLIO_ISTRUZIONI_LANDING.md):
-//   - Variabile d'ambiente  RESEND_API_KEY   (la chiave del tuo account Resend)
-//   - Variabile d'ambiente  MAIL_FROM        (il mittente del TUO dominio verificato,
-//                                              es. "Elystria <noreply@iltuodominio.it>")
+//  PERCHÉ BREVO: permette di verificare un SINGOLO indirizzo email come mittente
+//  (con un codice via email), senza configurare alcun record DNS. Così l'email
+//  arriva a CHIUNQUE si iscriva — professore compreso.
 //
-//  NOTA: la chiave NON va mai scritta qui dentro. Resta su Vercel come env var.
+//  COSA TI SERVE SU VERCEL (vedi FOGLIO_ISTRUZIONI.md):
+//   - Variabile d'ambiente  BREVO_API_KEY   (la API key del tuo account Brevo)
+//   - Variabile d'ambiente  MAIL_FROM       (il mittente VERIFICATO su Brevo,
+//                                             es. "Elystria <growup.agency.elystria@gmail.com>")
+//
+//  IMPORTANTE: su Brevo serve la "API key" (per le chiamate REST), NON la "SMTP key":
+//  sono due credenziali diverse. Usare quella sbagliata è l'errore più comune.
+//  La chiave NON va mai scritta qui dentro. Resta su Vercel come env var.
 // ============================================================================
 
 // Soglia "primi N" (fittizia). Cambia qui il numero se vuoi.
@@ -21,7 +27,7 @@ const SOGLIA_VINCITORI = 50;
 
 // (Opzionale) Punto di partenza del contatore. Lascia 0 per una demo normale.
 // Per la presentazione puoi farlo partire "vicino al 50" — impostando su Vercel la env var
-// START_COUNT (es. 48) — così con poche iscrizioni mostri sia il caso "vincitore"
+// START_COUNT (es. 49) — così con poche iscrizioni mostri sia il caso "vincitore"
 // sia il caso "3 livelli gratis" senza dover fare 50 iscrizioni vere.
 const START_COUNT = parseInt(process.env.START_COUNT || '0', 10) || 0;
 
@@ -35,10 +41,17 @@ let conteggioIscritti = START_COUNT;
 // di nuovo e riceve lo stesso esito di prima (niente numeri sballati durante la demo).
 const emailViste = new Map(); // email(minuscolo) -> { winner, position }
 
-// Mittente: il tuo dominio verificato su Resend, letto dalla env var MAIL_FROM.
-// Se per qualche motivo la variabile manca, ripieghiamo sull'indirizzo di test di Resend
-// (che però invia solo all'email del tuo account Resend) per non lasciare il form rotto.
-const FROM = process.env.MAIL_FROM || 'Elystria <onboarding@resend.dev>';
+// Mittente VERIFICATO su Brevo, letto dalla env var MAIL_FROM.
+// Formato accettato: "Nome <indirizzo@dominio>" oppure solo "indirizzo@dominio".
+// Esempio: Elystria <growup.agency.elystria@gmail.com>
+const MAIL_FROM = process.env.MAIL_FROM || 'Elystria <onboarding@example.com>';
+
+// Estrae nome ed email dal valore di MAIL_FROM (Brevo li vuole separati).
+function parseFrom(raw) {
+  const m = raw.match(/^\s*(.*?)\s*<\s*([^>]+?)\s*>\s*$/);
+  if (m) return { name: m[1] || 'Elystria', email: m[2] };
+  return { name: 'Elystria', email: raw.trim() };
+}
 
 // ---- Testi email (IT/EN) -------------------------------------------------
 function emailVincitore(lang) {
@@ -124,9 +137,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ ok: false, error: 'invalid_email' });
   }
 
-  // chiave Resend dalla env var (mai nel codice)
-  const RESEND_API_KEY = process.env.RESEND_API_KEY;
-  if (!RESEND_API_KEY) {
+  // chiave Brevo dalla env var (mai nel codice)
+  const BREVO_API_KEY = process.env.BREVO_API_KEY;
+  if (!BREVO_API_KEY) {
     // così, se manca la chiave, capisci subito il perché dai log di Vercel
     return res.status(500).json({ ok: false, error: 'missing_api_key' });
   }
@@ -148,31 +161,39 @@ export default async function handler(req, res) {
     winner = position <= SOGLIA_VINCITORI;
   }
 
-  // prepara i testi
+  // prepara i testi e il mittente
   const t = winner ? emailVincitore(lang) : emailStandard(lang);
+  const sender = parseFrom(MAIL_FROM);
 
-  // invia l'email tramite l'API di Resend
+  // invia l'email tramite l'API di Brevo (endpoint REST /v3/smtp/email)
   try {
-    const r = await fetch('https://api.resend.com/emails', {
+    const r = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json'
+        'api-key': BREVO_API_KEY,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify({
-        from: FROM,
-        to: [email],
+        sender: { name: sender.name, email: sender.email },
+        to: [{ email: email }],
         subject: t.subject,
-        html: buildHtml(t)
+        htmlContent: buildHtml(t)
       })
     });
 
     if (!r.ok) {
       const detail = await r.text().catch(() => '');
-      console.error('Resend error:', r.status, detail);
+      console.error('Brevo error:', r.status, detail);
       // se l'email non parte e l'iscritto era NUOVO, annulliamo l'incremento
       // così il conteggio resta coerente (i doppioni non avevano inciso comunque)
       if (!giaVista) conteggioIscritti -= 1;
+      // Causa tipica: il mittente (MAIL_FROM) non è ancora VERIFICATO su Brevo.
+      // Restituiamo un codice dedicato così il form mostra un messaggio chiaro.
+      const lower = (detail || '').toLowerCase();
+      if (lower.includes('sender') && (lower.includes('not') || lower.includes('valid'))) {
+        return res.status(403).json({ ok: false, error: 'sender_not_verified' });
+      }
       return res.status(502).json({ ok: false, error: 'email_failed' });
     }
 
@@ -182,7 +203,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ ok: true, winner, position });
   } catch (err) {
-    console.error('Network/Resend exception:', err);
+    console.error('Network/Brevo exception:', err);
     if (!giaVista) conteggioIscritti -= 1;
     return res.status(502).json({ ok: false, error: 'email_failed' });
   }
