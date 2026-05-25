@@ -93,7 +93,14 @@ function emailStandard(lang) {
 }
 
 // ---- Template HTML dell'email (stile oro-su-nero del sito) ----------------
-function buildHtml(t) {
+// Sanifica il nome per inserirlo nell'HTML senza rischi (toglie < > &).
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function buildHtml(t, firstName, lang) {
+  const ciao = lang === 'en' ? 'Hi' : 'Ciao';
+  const nome = escapeHtml(firstName);
+  const greeting = nome ? `${ciao} ${nome},` : (lang === 'en' ? 'Hi,' : 'Ciao,');
   return `<!DOCTYPE html>
 <html><body style="margin:0;background:#0a0810;font-family:Georgia,'Times New Roman',serif;color:#f0ead8">
   <div style="max-width:560px;margin:0 auto;padding:40px 28px">
@@ -103,6 +110,7 @@ function buildHtml(t) {
     </div>
     <div style="border:1px solid rgba(230,192,104,0.25);border-radius:12px;background:#0d0b14;padding:36px 30px;text-align:center">
       <div style="font-size:40px;margin-bottom:14px">🔥</div>
+      <p style="font-size:16px;color:#f0ead8;margin:0 0 14px;text-align:left">${greeting}</p>
       <h1 style="font-family:Georgia,serif;font-size:22px;color:#f8e4b0;margin:0 0 16px;font-weight:bold">${t.heading}</h1>
       <p style="font-size:16px;color:#c4baa4;margin:0 0 18px;line-height:1.5">${t.lead}</p>
       <p style="font-size:17px;color:#ffce4d;font-weight:bold;margin:0 0 18px;line-height:1.5">${t.prize}</p>
@@ -129,7 +137,14 @@ export default async function handler(req, res) {
     try { body = JSON.parse(body); } catch { body = {}; }
   }
   const email = (body && body.email ? String(body.email) : '').trim();
+  const firstName = (body && body.firstName ? String(body.firstName) : '').trim().slice(0, 60);
+  const lastName = (body && body.lastName ? String(body.lastName) : '').trim().slice(0, 60);
   const lang = body && body.lang === 'en' ? 'en' : 'it';
+
+  // validazione: nome, cognome ed email obbligatori
+  if (!firstName || !lastName) {
+    return res.status(400).json({ ok: false, error: 'required' });
+  }
 
   // validazione email lato server
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -176,9 +191,9 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         sender: { name: sender.name, email: sender.email },
-        to: [{ email: email }],
+        to: [{ email: email, name: (firstName + ' ' + lastName).trim() }],
         subject: t.subject,
-        htmlContent: buildHtml(t)
+        htmlContent: buildHtml(t, firstName, lang)
       })
     });
 

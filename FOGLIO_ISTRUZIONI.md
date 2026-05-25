@@ -12,10 +12,14 @@ Lo shop e tutto il resto funzionano già da soli, senza alcuna configurazione.
 
 ## COSA C'È NEL PACCHETTO
 
-- **`index.html`** — la landing con il form per l'email (è la home del sito).
-- **`shop.html`** — il finto e-commerce con le 7 action figure e il carrello.
-- **`api/register.js`** — la "funzione serverless": riceve l'email dal form e la invia
-  tramite Brevo. È l'unica parte che richiede un po' di configurazione (i passi qui sotto).
+- **`index.html`** — la landing con il form (Nome, Cognome, Email + casella privacy obbligatoria)
+  e un **carosello** che mostra a rotazione le action figure.
+- **`shop.html`** — il finto e-commerce: cliccando una scheda si apre il **popup** col dettaglio
+  del personaggio; carrello completo.
+- **`privacy.html`** — l'informativa sulla privacy (stile GDPR, dichiaratamente dimostrativa),
+  collegata dal form e dal menu.
+- **`api/register.js`** — la funzione serverless che invia l'email tramite Brevo
+  (ora riceve anche Nome e Cognome e personalizza il saluto: "Ciao Nome,").
 - **`vercel.json`** e le immagini in `assets/img/`.
 
 ---

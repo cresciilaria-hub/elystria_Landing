@@ -90,6 +90,17 @@
   .field input:focus{outline:none;border-color:var(--oro);box-shadow:0 0 0 3px rgba(230,192,104,0.12)}
   .field input::placeholder{color:var(--oro-scuro);opacity:.7}
   .field input.invalid{border-color:#e0556b;box-shadow:0 0 0 3px rgba(224,85,107,0.12)}
+  .field-row{display:flex;gap:14px}
+  .field-row .field{flex:1;margin-bottom:18px}
+  .privacy-check{display:flex;align-items:flex-start;gap:11px;margin:4px 0 18px;cursor:pointer;font-size:.98rem;color:var(--testo-soft);line-height:1.4}
+  .privacy-check input{position:absolute;opacity:0;width:0;height:0}
+  .privacy-check .pc-box{flex-shrink:0;width:20px;height:20px;border:1px solid var(--bordo);border-radius:4px;background:rgba(10,8,16,0.7);margin-top:1px;position:relative;transition:all .25s}
+  .privacy-check input:checked+.pc-box{background:var(--oro);border-color:var(--oro)}
+  .privacy-check input:checked+.pc-box::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--nero);font-size:.85rem;font-weight:700}
+  .privacy-check input:focus-visible+.pc-box{box-shadow:0 0 0 3px rgba(230,192,104,0.25)}
+  .privacy-check.invalid .pc-box{border-color:#e0556b;box-shadow:0 0 0 3px rgba(224,85,107,0.12)}
+  .privacy-check .pc-text a{color:var(--oro-chiaro);text-decoration:underline;text-underline-offset:2px}
+  .privacy-check .pc-text a:hover{color:var(--fiamma)}
   .submit-btn{width:100%;font-family:'Cinzel',serif;font-size:.84rem;letter-spacing:.16em;text-transform:uppercase;padding:16px;border:1px solid var(--oro);color:var(--nero);background:var(--oro);cursor:pointer;transition:all .3s;font-weight:700;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px}
   .submit-btn:hover:not(:disabled){background:var(--fiamma);box-shadow:0 0 40px rgba(255,206,77,0.5)}
   .submit-btn:disabled{opacity:.6;cursor:wait}
@@ -117,11 +128,24 @@
   .shop-teaser{position:relative;z-index:2;padding:120px 24px;text-align:center;max-width:900px;margin:0 auto}
   .shop-teaser h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.9rem,4.5vw,2.8rem);color:var(--oro-chiaro);letter-spacing:.04em;margin-bottom:18px}
   .shop-teaser p{font-size:1.2rem;color:var(--testo-soft);max-width:600px;margin:0 auto 36px}
-  .teaser-figs{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
-  .teaser-fig{width:120px;border-radius:8px;overflow:hidden;border:1px solid var(--bordo);transition:transform .4s,box-shadow .4s,border-color .4s}
-  .teaser-fig:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,0.5),0 0 30px rgba(230,192,104,0.18);border-color:var(--oro)}
-  .teaser-fig img{width:100%;height:150px;object-fit:cover;object-position:center 14%;display:block}
-  .teaser-fig .tf-name{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.1em;color:var(--oro-chiaro);padding:8px 4px;background:rgba(13,11,20,0.9)}
+  /* ====== CAROSELLO ACTION FIGURE ====== */
+  .carousel{position:relative;max-width:520px;margin:0 auto 40px}
+  .carousel-stage{position:relative;height:440px;display:flex;align-items:center;justify-content:center}
+  .cslide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:scale(.94);transition:opacity .8s ease,transform .8s ease;pointer-events:none}
+  .cslide.active{opacity:1;transform:scale(1);pointer-events:auto}
+  .cslide-frame{position:relative;width:260px;height:330px;border-radius:10px;overflow:hidden;border:1px solid var(--bordo);box-shadow:0 30px 70px rgba(0,0,0,0.6),0 0 60px rgba(230,192,104,0.16)}
+  .cslide-frame::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(13,11,20,0.85) 100%)}
+  .cslide-frame img{width:100%;height:100%;object-fit:cover;object-position:center 14%}
+  .cslide-name{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;color:var(--oro-chiaro);letter-spacing:.04em;margin-top:18px;text-shadow:0 0 28px rgba(255,206,77,0.3)}
+  .cslide-role{font-style:italic;color:var(--testo-soft);font-size:1.02rem;margin-top:4px}
+  .carousel-dots{display:flex;gap:10px;justify-content:center;margin-top:24px}
+  .cdot{width:10px;height:10px;border-radius:50%;border:1px solid var(--oro-scuro);background:transparent;cursor:pointer;padding:0;transition:all .3s}
+  .cdot.active{background:var(--oro);border-color:var(--oro);box-shadow:0 0 14px rgba(255,206,77,0.5)}
+  .carousel-arrow{position:absolute;top:155px;z-index:5;width:44px;height:44px;border-radius:50%;border:1px solid var(--bordo);background:rgba(13,11,20,0.7);color:var(--oro-chiaro);font-size:1.2rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+  .carousel-arrow:hover{background:var(--oro);color:var(--nero);border-color:var(--oro)}
+  .carousel-arrow.prev{left:-8px}
+  .carousel-arrow.next{right:-8px}
+  @media(max-width:560px){.carousel-arrow{display:none}.cslide-frame{width:220px;height:280px}.carousel-stage{height:400px}}
   .btn{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;padding:16px 34px;text-decoration:none;cursor:pointer;border:1px solid var(--oro);color:var(--oro-chiaro);background:rgba(255,206,77,0.12);transition:all .4s;display:inline-block}
   .btn:hover{background:var(--oro);color:var(--nero);box-shadow:0 0 40px rgba(255,206,77,0.5)}
 
@@ -159,6 +183,7 @@
   <nav id="nav">
     <a href="index.html" class="active" data-it="Registrati" data-en="Sign up">Registrati</a>
     <a href="shop.html" data-it="Shop" data-en="Shop">Shop</a>
+    <a href="privacy.html" data-it="Privacy" data-en="Privacy">Privacy</a>
     <div class="lang">
       <button id="lang-it" class="active" onclick="setLang('it')">IT</button>
       <button id="lang-en" onclick="setLang('en')">EN</button>
@@ -201,19 +226,36 @@
       <!-- VISTA FORM -->
       <div id="formView">
         <h2 data-it="Reclama la tua ricompensa" data-en="Claim your reward">Reclama la tua ricompensa</h2>
-        <p class="fc-sub" data-it="Inserisci la tua email per iscriverti" data-en="Enter your email to sign up">Inserisci la tua email per iscriverti</p>
+        <p class="fc-sub" data-it="Compila il modulo per iscriverti" data-en="Fill in the form to sign up">Compila il modulo per iscriverti</p>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="firstName" data-it="Nome" data-en="First name">Nome</label>
+            <input type="text" id="firstName" name="firstName" autocomplete="given-name" placeholder="Ilaria" required>
+          </div>
+          <div class="field">
+            <label for="lastName" data-it="Cognome" data-en="Last name">Cognome</label>
+            <input type="text" id="lastName" name="lastName" autocomplete="family-name" placeholder="Rossi" required>
+          </div>
+        </div>
 
         <div class="field">
           <label for="email" data-it="La tua email" data-en="Your email">La tua email</label>
           <input type="email" id="email" name="email" autocomplete="email" placeholder="nome@esempio.com" required>
         </div>
 
+        <label class="privacy-check" for="privacy">
+          <input type="checkbox" id="privacy" name="privacy">
+          <span class="pc-box" aria-hidden="true"></span>
+          <span class="pc-text" data-it="Ho letto e accetto l'<a href='privacy.html' target='_blank'>Informativa sulla privacy</a>." data-en="I have read and accept the <a href='privacy.html' target='_blank'>Privacy Policy</a>.">Ho letto e accetto l'<a href="privacy.html" target="_blank">Informativa sulla privacy</a>.</span>
+        </label>
+
         <button class="submit-btn" id="submitBtn" data-it="Iscrivimi" data-en="Sign me up">
           <span class="spinner"></span>
           <span class="btn-label" data-it="Iscrivimi" data-en="Sign me up">Iscrivimi</span>
         </button>
 
-        <p class="fc-privacy" data-it="Useremo la tua email solo per inviarti la ricompensa. Progetto scolastico dimostrativo." data-en="We'll use your email only to send your reward. Demonstrative school project.">Useremo la tua email solo per inviarti la ricompensa. Progetto scolastico dimostrativo.</p>
+        <p class="fc-privacy" data-it="Useremo i tuoi dati solo per inviarti la ricompensa. Progetto scolastico dimostrativo." data-en="We'll use your data only to send your reward. Demonstrative school project.">Useremo i tuoi dati solo per inviarti la ricompensa. Progetto scolastico dimostrativo.</p>
 
         <div class="msg error" id="errMsg"></div>
       </div>
@@ -234,11 +276,11 @@
 <section class="shop-teaser reveal">
   <h2 data-it="Vuoi tutta la collezione?" data-en="Want the whole collection?">Vuoi tutta la collezione?</h2>
   <p data-it="Le action figure di Elystria — eroi, Dei caduti e il Divoratore — ti aspettano nello shop ufficiale." data-en="The Elystria action figures — heroes, fallen Gods and the Devourer — await you in the official shop.">Le action figure di Elystria — eroi, Dei caduti e il Divoratore — ti aspettano nello shop ufficiale.</p>
-  <div class="teaser-figs">
-    <div class="teaser-fig"><img src="assets/img/zython.jpg" alt="Zython"><div class="tf-name">Zython</div></div>
-    <div class="teaser-fig"><img src="assets/img/theron3.jpg" alt="Theron"><div class="tf-name">Theron</div></div>
-    <div class="teaser-fig"><img src="assets/img/ophelia.jpg" alt="Ophelia"><div class="tf-name">Ophelia</div></div>
-    <div class="teaser-fig"><img src="assets/img/firyon.jpg" alt="Firyon"><div class="tf-name">Firyon</div></div>
+  <div class="carousel" id="carousel">
+    <button class="carousel-arrow prev" id="cPrev" aria-label="Precedente">‹</button>
+    <button class="carousel-arrow next" id="cNext" aria-label="Successiva">›</button>
+    <div class="carousel-stage" id="carouselStage"></div>
+    <div class="carousel-dots" id="carouselDots"></div>
   </div>
   <a href="shop.html" class="btn" data-it="Vai allo shop" data-en="Go to the shop">Vai allo shop</a>
 </section>
@@ -267,12 +309,18 @@
   };
   const ERR = {
     invalid:{it:'Inserisci un indirizzo email valido.',en:'Please enter a valid email address.'},
+    required:{it:'Compila Nome, Cognome ed Email.',en:'Please fill in First name, Last name and Email.'},
+    privacy:{it:'Devi accettare l\u2019Informativa sulla privacy per iscriverti.',en:'You must accept the Privacy Policy to sign up.'},
     generic:{it:'Qualcosa è andato storto. Riprova tra poco.',en:'Something went wrong. Please try again shortly.'},
     network:{it:'Impossibile contattare il server. Controlla la connessione e riprova.',en:'Could not reach the server. Check your connection and try again.'},
     sender_not_verified:{it:'Invio non riuscito: il mittente non è ancora verificato. Riprova più tardi.',en:'Sending failed: the sender is not verified yet. Please try again later.'}
   };
 
+  const firstNameInput=document.getElementById('firstName');
+  const lastNameInput=document.getElementById('lastName');
   const emailInput=document.getElementById('email');
+  const privacyInput=document.getElementById('privacy');
+  const privacyLabel=document.querySelector('.privacy-check');
   const submitBtn=document.getElementById('submitBtn');
   const errMsg=document.getElementById('errMsg');
   const formView=document.getElementById('formView');
@@ -282,16 +330,39 @@
     errMsg.textContent = ERR[key][currentLang];
     errMsg.classList.add('show');
   }
-  function clearError(){ errMsg.classList.remove('show'); emailInput.classList.remove('invalid'); }
+  function clearError(){
+    errMsg.classList.remove('show');
+    emailInput.classList.remove('invalid');
+    firstNameInput.classList.remove('invalid');
+    lastNameInput.classList.remove('invalid');
+    privacyLabel.classList.remove('invalid');
+  }
 
   function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
   async function register(){
     clearError();
+    const firstName=firstNameInput.value.trim();
+    const lastName=lastNameInput.value.trim();
     const email=emailInput.value.trim();
+
+    // campi obbligatori
+    if(!firstName||!lastName||!email){
+      if(!firstName)firstNameInput.classList.add('invalid');
+      if(!lastName)lastNameInput.classList.add('invalid');
+      if(!email)emailInput.classList.add('invalid');
+      showError('required');
+      return;
+    }
     if(!validEmail(email)){
       emailInput.classList.add('invalid');
       showError('invalid');
+      return;
+    }
+    // privacy obbligatoria
+    if(!privacyInput.checked){
+      privacyLabel.classList.add('invalid');
+      showError('privacy');
       return;
     }
     // stato di caricamento
@@ -302,7 +373,7 @@
       const res = await fetch('/api/register',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({email, lang:currentLang})
+        body:JSON.stringify({firstName, lastName, email, lang:currentLang})
       });
       let data={};
       try{ data = await res.json(); }catch(e){ data={}; }
@@ -338,8 +409,51 @@
   }
 
   submitBtn.addEventListener('click',register);
-  emailInput.addEventListener('keydown',e=>{if(e.key==='Enter')register()});
-  emailInput.addEventListener('input',clearError);
+  [firstNameInput,lastNameInput,emailInput].forEach(inp=>{
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')register()});
+    inp.addEventListener('input',clearError);
+  });
+  privacyInput.addEventListener('change',clearError);
+
+  /* ====== CAROSELLO ====== */
+  const figures=[
+    {img:'assets/img/zython.jpg',  name:'Zython',  role:{it:'Il Primo Divoratore',en:'The First Devourer'}},
+    {img:'assets/img/theron3.jpg', name:'Theron',  role:{it:'Il Prediletto',en:'The Chosen One'}},
+    {img:'assets/img/ophelia.jpg', name:'Ophelia', role:{it:'Dea della Saggezza',en:'Goddess of Wisdom'}},
+    {img:'assets/img/firyon.jpg',  name:'Firyon',  role:{it:'Dio del Fuoco',en:'God of Fire'}},
+    {img:'assets/img/adoria.jpg',  name:'Adoria',  role:{it:'Dio dell\u2019Acqua',en:'God of Water'}},
+    {img:'assets/img/gairok.jpg',  name:'Gairok',  role:{it:'Dio della Terra',en:'God of Earth'}},
+    {img:'assets/img/neraya.jpg',  name:'Neraya',  role:{it:'Dea dell\u2019Aria',en:'Goddess of Air'}}
+  ];
+  const stage=document.getElementById('carouselStage');
+  const dotsWrap=document.getElementById('carouselDots');
+  let cIndex=0, cTimer=null;
+  figures.forEach((f,i)=>{
+    const s=document.createElement('div');
+    s.className='cslide'+(i===0?' active':'');
+    s.innerHTML=`<div class="cslide-frame"><img src="${f.img}" alt="${f.name}"></div>
+      <div class="cslide-name">${f.name}</div>
+      <div class="cslide-role" data-it="${f.role.it}" data-en="${f.role.en}">${f.role[currentLang]}</div>`;
+    stage.appendChild(s);
+    const d=document.createElement('button');
+    d.className='cdot'+(i===0?' active':'');
+    d.setAttribute('aria-label','Figure '+(i+1));
+    d.addEventListener('click',()=>{goTo(i);restartTimer();});
+    dotsWrap.appendChild(d);
+  });
+  const slides=stage.querySelectorAll('.cslide');
+  const dots=dotsWrap.querySelectorAll('.cdot');
+  function goTo(i){
+    cIndex=(i+figures.length)%figures.length;
+    slides.forEach((s,k)=>s.classList.toggle('active',k===cIndex));
+    dots.forEach((d,k)=>d.classList.toggle('active',k===cIndex));
+  }
+  function next(){goTo(cIndex+1);}
+  function prev(){goTo(cIndex-1);}
+  function restartTimer(){clearInterval(cTimer);cTimer=setInterval(next,3500);}
+  document.getElementById('cNext').addEventListener('click',()=>{next();restartTimer();});
+  document.getElementById('cPrev').addEventListener('click',()=>{prev();restartTimer();});
+  restartTimer();
 
   /* ====== MULTILINGUA ====== */
   function setLang(lang){

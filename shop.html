@@ -74,7 +74,7 @@
   .filter-btn.active{background:var(--oro);color:var(--nero);border-color:var(--oro);font-weight:700}
 
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:30px}
-  .product{position:relative;border:1px solid var(--bordo);border-radius:10px;overflow:hidden;background:#0d0b14;display:flex;flex-direction:column;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s,border-color .5s}
+  .product{position:relative;border:1px solid var(--bordo);border-radius:10px;overflow:hidden;background:#0d0b14;display:flex;flex-direction:column;cursor:pointer;transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s,border-color .5s}
   .product:hover{transform:translateY(-8px);box-shadow:0 28px 60px rgba(0,0,0,0.6),0 0 50px rgba(230,192,104,0.18);border-color:var(--oro)}
   .product .el-bar{position:absolute;top:0;left:0;right:0;height:3px;z-index:3;opacity:.9}
   .el-acqua .el-bar{background:linear-gradient(90deg,#2ec5d3,#5ad1ff)}
@@ -148,6 +148,22 @@
   .cm-card button{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;padding:14px 30px;border:1px solid var(--oro);color:var(--oro-chiaro);background:rgba(255,206,77,0.1);cursor:pointer;transition:all .3s}
   .cm-card button:hover{background:var(--oro);color:var(--nero)}
 
+  /* ====== MODALE DETTAGLIO PERSONAGGIO ====== */
+  .detail-modal{position:fixed;inset:0;z-index:310;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(5,4,10,0.85);backdrop-filter:blur(6px)}
+  .detail-modal.open{display:flex}
+  .dm-card{position:relative;max-width:760px;width:100%;background:rgba(13,11,20,0.99);border:1px solid var(--oro);border-radius:14px;overflow:hidden;display:grid;grid-template-columns:300px 1fr;box-shadow:0 40px 100px rgba(0,0,0,0.7),0 0 70px rgba(255,206,77,0.12);max-height:90vh}
+  .dm-close{position:absolute;top:14px;right:16px;z-index:5;background:rgba(10,8,16,0.6);border:1px solid var(--bordo);color:var(--testo-soft);font-size:1.5rem;line-height:1;width:38px;height:38px;border-radius:50%;cursor:pointer;transition:all .3s}
+  .dm-close:hover{color:var(--oro-chiaro);border-color:var(--oro)}
+  .dm-img{position:relative;overflow:hidden;background:#080610}
+  .dm-img img{width:100%;height:100%;object-fit:cover;object-position:center 14%;min-height:320px}
+  .dm-body{padding:38px 34px;overflow-y:auto}
+  .dm-role{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--oro);margin-bottom:8px}
+  .dm-name{font-family:'Cinzel',serif;font-weight:700;font-size:2rem;color:var(--oro-chiaro);letter-spacing:.03em;line-height:1.05}
+  .dm-epithet{font-style:italic;color:var(--testo-soft);font-size:1.05rem;margin:8px 0 18px}
+  .dm-text{color:var(--testo-soft);font-size:1.05rem;line-height:1.6;margin-bottom:26px}
+  .dm-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  @media(max-width:680px){.dm-card{grid-template-columns:1fr;max-height:92vh;overflow-y:auto}.dm-img img{min-height:240px;max-height:280px}.dm-body{padding:26px 24px}}
+
   /* toast aggiunto al carrello */
   .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(120px);z-index:320;background:rgba(13,11,20,0.98);border:1px solid var(--oro);border-radius:6px;padding:14px 24px;font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.06em;color:var(--oro-chiaro);box-shadow:0 20px 50px rgba(0,0,0,0.6);transition:transform .4s cubic-bezier(.2,.7,.2,1);white-space:nowrap}
   .toast.show{transform:translateX(-50%) translateY(0)}
@@ -181,6 +197,7 @@
   <nav id="nav">
     <a href="index.html" data-it="Registrati" data-en="Sign up">Registrati</a>
     <a href="shop.html" class="active" data-it="Shop" data-en="Shop">Shop</a>
+    <a href="privacy.html" data-it="Privacy" data-en="Privacy">Privacy</a>
     <div class="lang">
       <button id="lang-it" class="active" onclick="setLang('it')">IT</button>
       <button id="lang-en" onclick="setLang('en')">EN</button>
@@ -239,6 +256,24 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- MODALE DETTAGLIO PERSONAGGIO -->
+<div class="detail-modal" id="detailModal">
+  <div class="dm-card">
+    <button class="dm-close" id="dmClose" aria-label="Chiudi">&times;</button>
+    <div class="dm-img"><img id="dmImg" src="" alt=""></div>
+    <div class="dm-body">
+      <div class="dm-role" id="dmRole"></div>
+      <h2 class="dm-name" id="dmName"></h2>
+      <div class="dm-epithet" id="dmEpithet"></div>
+      <p class="dm-text" id="dmText"></p>
+      <div class="dm-foot">
+        <span class="price" id="dmPrice"></span>
+        <button class="add-btn" id="dmAdd" data-it="Aggiungi al carrello" data-en="Add to cart">Aggiungi al carrello</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <div class="f-title">ELYSTRIA — La Fiamma Primordiale</div>
   <p class="placeholder" data-it="Nome scuola · Classe · Anno scolastico (da inserire)" data-en="School name · Class · School year (to be added)">Nome scuola · Classe · Anno scolastico (da inserire)</p>
@@ -250,25 +285,39 @@
   const prodotti = [
     {id:'theron', gruppo:'prot', el:'oro',   img:'assets/img/theron3.jpg',
       role:{it:'Il Prediletto',en:'The Chosen One'}, name:{it:'Theron',en:'Theron'},
-      epithet:{it:'Colui che brandisce la Fiamma',en:'He who wields the Flame'}, prezzo:49.90},
+      epithet:{it:'Colui che brandisce la Fiamma',en:'He who wields the Flame'}, prezzo:49.90,
+      body:{it:"Nato dall'unione proibita tra un Dio e una mortale, Theron è il solo capace di brandire la Fiamma Primordiale senza esserne consumato. Guidato da Ophelia, attraversa i quattro Regni corrotti per riportare la luce in Elystria.",
+            en:"Born of the forbidden union between a God and a mortal, Theron is the only one able to wield the Primordial Flame without being consumed. Guided by Ophelia, he crosses the four corrupted Realms to bring light back to Elystria."}},
     {id:'ophelia', gruppo:'prot', el:'oro',  img:'assets/img/ophelia.jpg',
       role:{it:'Dea della Saggezza',en:'Goddess of Wisdom'}, name:{it:'Ophelia',en:'Ophelia'},
-      epithet:{it:'La guida eterea',en:'The ethereal guide'}, prezzo:44.90},
+      epithet:{it:'La guida eterea',en:'The ethereal guide'}, prezzo:44.90,
+      body:{it:"Custode dell'ultimo frammento intatto della Fiamma, Ophelia sacrificò la sua forma fisica per sfuggire a Zython, divenendo uno spirito etereo. È lei a risvegliare Theron e a guidarlo lungo tutto il viaggio.",
+            en:"Keeper of the last intact shard of the Flame, Ophelia sacrificed her physical form to escape Zython, becoming an ethereal spirit. It is she who awakens Theron and guides him throughout the journey."}},
     {id:'zython', gruppo:'prot', el:'ombra', img:'assets/img/zython.jpg',
       role:{it:'Il Primo Divoratore',en:'The First Devourer'}, name:{it:'Zython',en:'Zython'},
-      epithet:{it:'Il Titano che spezzò l\u2019armonia',en:'The Titan who broke the harmony'}, prezzo:64.90},
+      epithet:{it:'Il Titano che spezzò l\u2019armonia',en:'The Titan who broke the harmony'}, prezzo:64.90,
+      body:{it:"Entità di antica oscurità, Zython bramava il potere assoluto della Fiamma. Sopraffece quattro dei cinque Dei, imprigionandoli in corpi mostruosi. Idra dal corpo draconico avvolto in tentacoli d'ombra, è il boss finale di Elystria.",
+            en:"An entity of ancient darkness, Zython craved the absolute power of the Flame. He overpowered four of the five Gods, imprisoning them in monstrous bodies. A hydra with a draconic body wreathed in shadow tentacles, he is the final boss of Elystria."}},
     {id:'adoria', gruppo:'dio', el:'acqua',  img:'assets/img/adoria.jpg',
       role:{it:'Dio dell\u2019Acqua',en:'God of Water'}, name:{it:'Adoria',en:'Adoria'},
-      epithet:{it:'La marea che ricorda la calma',en:'The tide that remembers calm'}, prezzo:39.90},
+      epithet:{it:'La marea che ricorda la calma',en:'The tide that remembers calm'}, prezzo:39.90,
+      body:{it:"Adoria incarnava la fluidità e la profondità degli abissi, custode del frammento dell'Acqua. Sotto il giogo di Zython la sua essenza è stata distorta in una creatura degli abissi: la Necrosirena.",
+            en:"Adoria embodied the fluidity and depth of the abyss, keeper of the Water shard. Under Zython's yoke his essence was twisted into a creature of the deep: the Necrosiren."}},
     {id:'firyon', gruppo:'dio', el:'fuoco',  img:'assets/img/firyon.jpg',
       role:{it:'Dio del Fuoco',en:'God of Fire'}, name:{it:'Firyon',en:'Firyon'},
-      epithet:{it:'La fiamma che fu calore, ora furia',en:'The flame that was warmth, now fury'}, prezzo:39.90},
+      epithet:{it:'La fiamma che fu calore, ora furia',en:'The flame that was warmth, now fury'}, prezzo:39.90,
+      body:{it:"Firyon rappresentava il calore vitale e la forza creatrice del fuoco. La corruzione lo ha trasformato in una mole di roccia fusa e rabbia incandescente: il Colosso di Lava.",
+            en:"Firyon represented the vital warmth and creative force of fire. Corruption turned him into a mass of molten rock and incandescent rage: the Lava Colossus."}},
     {id:'gairok', gruppo:'dio', el:'terra',  img:'assets/img/gairok.jpg',
       role:{it:'Dio della Terra',en:'God of Earth'}, name:{it:'Gairok',en:'Gairok'},
-      epithet:{it:'La radice che divenne prigione',en:'The root that became a prison'}, prezzo:39.90},
+      epithet:{it:'La radice che divenne prigione',en:'The root that became a prison'}, prezzo:39.90,
+      body:{it:"Gairok era la stabilità e la forza generatrice della terra, custode del frammento della Terra. Corrotto da Zython, è ora un'immensa entità arborea che ha inghiottito la foresta intorno a sé.",
+            en:"Gairok was the stability and generative force of the earth, keeper of the Earth shard. Corrupted by Zython, he is now an immense tree-like entity that has swallowed the forest around him."}},
     {id:'neraya', gruppo:'dio', el:'aria',   img:'assets/img/neraya.jpg',
       role:{it:'Dea dell\u2019Aria',en:'Goddess of Air'}, name:{it:'Neraya',en:'Neraya'},
-      epithet:{it:'Il vento spezzato in tempesta',en:'The wind broken into storm'}, prezzo:39.90}
+      epithet:{it:'Il vento spezzato in tempesta',en:'The wind broken into storm'}, prezzo:39.90,
+      body:{it:"Neraya incarnava la leggerezza e la libertà dei cieli, custode del frammento dell'Aria. La corruzione l'ha ridotta a uno spirito etereo instabile, intrappolato fra le correnti del suo stesso santuario.",
+            en:"Neraya embodied the lightness and freedom of the skies, keeper of the Air shard. Corruption reduced her to an unstable ethereal spirit, trapped among the currents of her own sanctuary."}}
   ];
 
   let currentLang = 'it';
@@ -313,7 +362,8 @@
             <button class="add-btn" data-id="${p.id}" data-it="${T.add.it}" data-en="${T.add.en}">${T.add[currentLang]}</button>
           </div>
         </div>`;
-      card.querySelector('.add-btn').addEventListener('click',e=>addToCart(p.id,e.target));
+      card.querySelector('.add-btn').addEventListener('click',e=>{e.stopPropagation();addToCart(p.id,e.target);});
+      card.addEventListener('click',()=>openDetail(p));
       grid.appendChild(card);
     });
   }
@@ -410,6 +460,31 @@
     Object.keys(cart).forEach(id=>delete cart[id]);
     renderCart();
   });
+
+  /* ====== MODALE DETTAGLIO PERSONAGGIO ====== */
+  const detailModal=document.getElementById('detailModal');
+  let detailProd=null;
+  function openDetail(p){
+    detailProd=p;
+    document.getElementById('dmImg').src=p.img;
+    document.getElementById('dmImg').alt=p.name[currentLang];
+    const role=document.getElementById('dmRole');
+    role.setAttribute('data-it',p.role.it);role.setAttribute('data-en',p.role.en);role.textContent=p.role[currentLang];
+    document.getElementById('dmName').textContent=p.name[currentLang];
+    const ep=document.getElementById('dmEpithet');
+    ep.setAttribute('data-it',p.epithet.it);ep.setAttribute('data-en',p.epithet.en);ep.textContent=p.epithet[currentLang];
+    const tx=document.getElementById('dmText');
+    tx.setAttribute('data-it',p.body.it);tx.setAttribute('data-en',p.body.en);tx.textContent=p.body[currentLang];
+    document.getElementById('dmPrice').textContent=fmt(p.prezzo);
+    detailModal.classList.add('open');
+  }
+  function closeDetail(){detailModal.classList.remove('open');}
+  document.getElementById('dmClose').addEventListener('click',closeDetail);
+  detailModal.addEventListener('click',e=>{if(e.target===detailModal)closeDetail();});
+  document.getElementById('dmAdd').addEventListener('click',()=>{
+    if(detailProd){addToCart(detailProd.id,document.getElementById('dmAdd'));}
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
 
   /* toast */
   let toastTimer;

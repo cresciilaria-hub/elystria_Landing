@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informativa sulla privacy — Elystria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nero:#0a0810;--oro:#e6c068;--oro-chiaro:#f8e4b0;--oro-scuro:#9c7a32;
+    --fiamma:#ffce4d;--testo:#f0ead8;--testo-soft:#c4baa4;--bordo:rgba(230,192,104,0.25);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--nero);color:var(--testo);font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1.6;overflow-x:hidden}
+
+  header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 42px;background:rgba(10,8,16,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--bordo)}
+  .brand{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.18em;color:var(--oro-chiaro);text-decoration:none;text-shadow:0 0 18px rgba(230,192,104,0.4)}
+  nav{display:flex;align-items:center;gap:6px}
+  nav a{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--testo-soft);text-decoration:none;padding:10px 14px;transition:color .3s}
+  nav a:hover{color:var(--oro-chiaro)}
+  .lang{display:flex;gap:2px;margin-left:14px;border:1px solid var(--bordo);border-radius:3px;overflow:hidden}
+  .lang button{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.1em;background:none;border:none;color:var(--testo-soft);padding:7px 11px;cursor:pointer;transition:all .25s}
+  .lang button.active{background:var(--oro);color:var(--nero);font-weight:700}
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .burger span{width:26px;height:2px;background:var(--oro-chiaro)}
+
+  .page-head{padding:150px 24px 40px;text-align:center;position:relative;overflow:hidden}
+  .page-head::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 50% 0%,rgba(255,206,77,0.12),transparent 60%);pointer-events:none}
+  .page-kicker{font-family:'Cinzel',serif;font-size:.74rem;letter-spacing:.4em;text-transform:uppercase;color:var(--oro-chiaro);margin-bottom:16px}
+  .page-title{font-family:'Cinzel',serif;font-weight:800;font-size:clamp(2rem,5vw,3rem);color:var(--oro-chiaro);letter-spacing:.03em;line-height:1.05;text-shadow:0 0 50px rgba(255,206,77,0.3)}
+  .updated{font-style:italic;color:var(--oro-scuro);margin-top:14px;font-size:1rem}
+
+  .doc{max-width:760px;margin:0 auto;padding:30px 24px 110px}
+  .doc .demo-banner{border:1px solid var(--bordo);border-left:3px solid var(--oro);border-radius:6px;background:rgba(255,206,77,0.06);padding:16px 20px;margin-bottom:40px;font-style:italic;color:var(--testo-soft);font-size:1.02rem}
+  .doc h2{font-family:'Cinzel',serif;font-weight:600;font-size:1.3rem;color:var(--oro-chiaro);letter-spacing:.03em;margin:38px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--bordo)}
+  .doc h2:first-of-type{margin-top:0}
+  .doc p{color:var(--testo-soft);margin-bottom:14px}
+  .doc ul{list-style:none;margin:0 0 16px}
+  .doc li{color:var(--testo-soft);position:relative;padding-left:24px;margin-bottom:10px}
+  .doc li::before{content:'◆';position:absolute;left:0;color:var(--oro-scuro);font-size:.8rem;top:4px}
+  .doc strong{color:var(--testo)}
+  .doc a{color:var(--oro-chiaro);text-decoration:underline;text-underline-offset:2px}
+  .back-link{display:inline-block;margin-top:30px;font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;padding:13px 26px;border:1px solid var(--oro);color:var(--oro-chiaro);background:rgba(255,206,77,0.1);text-decoration:none;transition:all .3s}
+  .back-link:hover{background:var(--oro);color:var(--nero)}
+
+  footer{position:relative;z-index:2;border-top:1px solid var(--bordo);padding:50px 24px 40px;text-align:center;background:rgba(10,8,16,0.7)}
+  footer .f-title{font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.2em;color:var(--oro);margin-bottom:12px}
+  footer p{font-size:.95rem;color:var(--testo-soft);margin:4px 0}
+  footer .placeholder{color:var(--oro-scuro);font-style:italic;opacity:.7}
+
+  @media(max-width:880px){
+    header{padding:14px 20px}
+    nav{position:fixed;top:0;right:-100%;width:78%;max-width:340px;height:100vh;flex-direction:column;align-items:flex-start;gap:0;background:rgba(10,9,16,0.99);backdrop-filter:blur(16px);padding:90px 30px 30px;transition:right .4s ease;border-left:1px solid var(--bordo)}
+    nav.open{right:0}
+    nav a{width:100%;padding:14px 0;font-size:.9rem}
+    .lang{margin:20px 0 0 0}
+    .burger{display:flex;z-index:101}
+  }
+</style>
+</head>
+<body>
+
+<header id="header">
+  <a href="index.html" class="brand">ELYSTRIA</a>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="nav">
+    <a href="index.html" data-it="Registrati" data-en="Sign up">Registrati</a>
+    <a href="shop.html" data-it="Shop" data-en="Shop">Shop</a>
+    <div class="lang">
+      <button id="lang-it" class="active" onclick="setLang('it')">IT</button>
+      <button id="lang-en" onclick="setLang('en')">EN</button>
+    </div>
+  </nav>
+</header>
+
+<section class="page-head">
+  <div class="page-kicker" data-it="Documento informativo" data-en="Information notice">Documento informativo</div>
+  <h1 class="page-title" data-it="Informativa sulla privacy" data-en="Privacy Policy">Informativa sulla privacy</h1>
+  <p class="updated" data-it="Ultimo aggiornamento: anno scolastico in corso" data-en="Last updated: current school year">Ultimo aggiornamento: anno scolastico in corso</p>
+</section>
+
+<div class="doc">
+  <div class="demo-banner" data-it="Nota: questo sito è un progetto scolastico dimostrativo dell'agenzia fittizia «GrowUp Agency». «Elystria» è un videogioco di fantasia. La presente informativa è redatta a scopo didattico per illustrare come dovrebbe essere strutturata un'informativa ai sensi del Regolamento (UE) 2016/679 (GDPR); non descrive un trattamento dati reale di un'azienda esistente." data-en="Note: this site is a demonstrative school project by the fictional agency “GrowUp Agency”. “Elystria” is a fictional video game. This policy is written for educational purposes to illustrate how a notice under Regulation (EU) 2016/679 (GDPR) should be structured; it does not describe real data processing by an existing company.">Nota: questo sito è un progetto scolastico dimostrativo dell'agenzia fittizia «GrowUp Agency». «Elystria» è un videogioco di fantasia. La presente informativa è redatta a scopo didattico per illustrare come dovrebbe essere strutturata un'informativa ai sensi del Regolamento (UE) 2016/679 (GDPR); non descrive un trattamento dati reale di un'azienda esistente.</div>
+
+  <h2 data-it="1. Titolare del trattamento" data-en="1. Data Controller">1. Titolare del trattamento</h2>
+  <p data-it="Il titolare del trattamento dei dati è «GrowUp Agency» (soggetto fittizio a scopo didattico), realizzatrice del progetto promozionale del videogioco «Elystria – La Fiamma Primordiale». Per qualsiasi richiesta relativa ai dati, in un contesto reale sarebbero indicati qui i recapiti del titolare." data-en="The data controller is “GrowUp Agency” (a fictional entity for educational purposes), creator of the promotional project for the video game “Elystria – The Primordial Flame”. In a real context, the controller's contact details would be provided here.">Il titolare del trattamento dei dati è «GrowUp Agency» (soggetto fittizio a scopo didattico), realizzatrice del progetto promozionale del videogioco «Elystria – La Fiamma Primordiale». Per qualsiasi richiesta relativa ai dati, in un contesto reale sarebbero indicati qui i recapiti del titolare.</p>
+
+  <h2 data-it="2. Quali dati raccogliamo" data-en="2. What data we collect">2. Quali dati raccogliamo</h2>
+  <p data-it="Tramite il modulo di registrazione raccogliamo unicamente i dati che ci fornisci volontariamente:" data-en="Through the registration form we collect only the data you voluntarily provide:">Tramite il modulo di registrazione raccogliamo unicamente i dati che ci fornisci volontariamente:</p>
+  <ul>
+    <li data-it="<strong>Nome e cognome</strong> — per personalizzare la comunicazione." data-en="<strong>First and last name</strong> — to personalize the communication."><strong>Nome e cognome</strong> — per personalizzare la comunicazione.</li>
+    <li data-it="<strong>Indirizzo email</strong> — per inviarti l'email con la ricompensa dell'iniziativa." data-en="<strong>Email address</strong> — to send you the email with the initiative's reward."><strong>Indirizzo email</strong> — per inviarti l'email con la ricompensa dell'iniziativa.</li>
+  </ul>
+  <p data-it="Non raccogliamo dati particolari (categorie sensibili) né dati di pagamento: lo shop presente sul sito è puramente dimostrativo e non elabora alcun pagamento reale." data-en="We do not collect special categories of data or payment data: the shop on this site is purely demonstrative and processes no real payments.">Non raccogliamo dati particolari (categorie sensibili) né dati di pagamento: lo shop presente sul sito è puramente dimostrativo e non elabora alcun pagamento reale.</p>
+
+  <h2 data-it="3. Finalità e base giuridica" data-en="3. Purpose and legal basis">3. Finalità e base giuridica</h2>
+  <p data-it="I tuoi dati sono trattati per la sola finalità di gestire la tua iscrizione all'iniziativa promozionale e inviarti la relativa email (notifica del premio o dei contenuti gratuiti). La base giuridica del trattamento è il tuo <strong>consenso</strong>, espresso spuntando l'apposita casella nel modulo, ai sensi dell'art. 6, par. 1, lett. a) del GDPR." data-en="Your data is processed solely to manage your registration to the promotional initiative and to send you the related email (prize notification or free content). The legal basis is your <strong>consent</strong>, given by ticking the box in the form, pursuant to Art. 6(1)(a) GDPR.">I tuoi dati sono trattati per la sola finalità di gestire la tua iscrizione all'iniziativa promozionale e inviarti la relativa email (notifica del premio o dei contenuti gratuiti). La base giuridica del trattamento è il tuo <strong>consenso</strong>, espresso spuntando l'apposita casella nel modulo, ai sensi dell'art. 6, par. 1, lett. a) del GDPR.</p>
+
+  <h2 data-it="4. Come trattiamo i dati" data-en="4. How we process the data">4. Come trattiamo i dati</h2>
+  <p data-it="L'invio delle email avviene tramite un fornitore esterno di servizi di posta (provider di email transazionali), che agisce come responsabile del trattamento. I dati sono trasmessi tramite connessione cifrata e utilizzati esclusivamente per l'invio del messaggio. Non vendiamo né cediamo i tuoi dati a terzi per finalità di marketing." data-en="Emails are sent through an external email service provider (transactional email provider), acting as data processor. Data is transmitted over an encrypted connection and used exclusively to send the message. We do not sell or share your data with third parties for marketing purposes.">L'invio delle email avviene tramite un fornitore esterno di servizi di posta (provider di email transazionali), che agisce come responsabile del trattamento. I dati sono trasmessi tramite connessione cifrata e utilizzati esclusivamente per l'invio del messaggio. Non vendiamo né cediamo i tuoi dati a terzi per finalità di marketing.</p>
+
+  <h2 data-it="5. Conservazione dei dati" data-en="5. Data retention">5. Conservazione dei dati</h2>
+  <p data-it="Trattandosi di un progetto dimostrativo, i dati inseriti non vengono conservati in un database permanente: sono utilizzati nel momento dell'iscrizione per inviare l'email e non vengono archiviati stabilmente. In un servizio reale, i dati sarebbero conservati per il tempo strettamente necessario alla finalità e poi cancellati." data-en="As this is a demonstrative project, the data entered is not stored in a permanent database: it is used at the moment of registration to send the email and is not permanently archived. In a real service, data would be kept only for as long as necessary and then deleted.">Trattandosi di un progetto dimostrativo, i dati inseriti non vengono conservati in un database permanente: sono utilizzati nel momento dell'iscrizione per inviare l'email e non vengono archiviati stabilmente. In un servizio reale, i dati sarebbero conservati per il tempo strettamente necessario alla finalità e poi cancellati.</p>
+
+  <h2 data-it="6. I tuoi diritti" data-en="6. Your rights">6. I tuoi diritti</h2>
+  <p data-it="In base al GDPR hai il diritto di chiedere in qualsiasi momento l'accesso ai tuoi dati, la loro rettifica o cancellazione, la limitazione del trattamento, nonché di revocare il consenso prestato e di proporre reclamo all'autorità di controllo (in Italia, il Garante per la protezione dei dati personali)." data-en="Under the GDPR you have the right to request access to your data, its rectification or erasure, restriction of processing, to withdraw your consent at any time, and to lodge a complaint with the supervisory authority (in Italy, the Garante per la protezione dei dati personali).">In base al GDPR hai il diritto di chiedere in qualsiasi momento l'accesso ai tuoi dati, la loro rettifica o cancellazione, la limitazione del trattamento, nonché di revocare il consenso prestato e di proporre reclamo all'autorità di controllo (in Italia, il Garante per la protezione dei dati personali).</p>
+
+  <h2 data-it="7. Cookie" data-en="7. Cookies">7. Cookie</h2>
+  <p data-it="Questo sito non utilizza cookie di profilazione né strumenti di tracciamento a fini pubblicitari. Vengono caricati unicamente i font web necessari alla resa grafica delle pagine." data-en="This site does not use profiling cookies or advertising tracking tools. Only the web fonts required for the page layout are loaded.">Questo sito non utilizza cookie di profilazione né strumenti di tracciamento a fini pubblicitari. Vengono caricati unicamente i font web necessari alla resa grafica delle pagine.</p>
+
+  <a href="index.html" class="back-link" data-it="← Torna alla registrazione" data-en="← Back to sign up">← Torna alla registrazione</a>
+</div>
+
+<footer>
+  <div class="f-title">ELYSTRIA — La Fiamma Primordiale</div>
+  <p class="placeholder" data-it="Nome scuola · Classe · Anno scolastico (da inserire)" data-en="School name · Class · School year (to be added)">Nome scuola · Classe · Anno scolastico (da inserire)</p>
+  <p data-it="Progetto realizzato da Ilaria, Martina e Jolanda" data-en="Project created by Ilaria, Martina and Jolanda">Progetto realizzato da Ilaria, Martina e Jolanda</p>
+</footer>
+
+<script>
+  function setLang(lang){
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-it]').forEach(el=>{const t=el.getAttribute('data-'+lang);if(t!==null)el.innerHTML=t});
+    document.getElementById('lang-it').classList.toggle('active',lang==='it');
+    document.getElementById('lang-en').classList.toggle('active',lang==='en');
+  }
+  const burger=document.getElementById('burger'),nav=document.getElementById('nav');
+  burger.addEventListener('click',()=>nav.classList.toggle('open'));
+</script>
+</body>
+</html>
