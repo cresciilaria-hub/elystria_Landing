@@ -46,6 +46,11 @@ const emailViste = new Map(); // email(minuscolo) -> { winner, position }
 // Esempio: Elystria <growup.agency.elystria@gmail.com>
 const MAIL_FROM = process.env.MAIL_FROM || 'Elystria <onboarding@example.com>';
 
+// URL pubblico del sito, per le immagini dentro l'email (devono stare online,
+// non possono essere file locali). Di default usa il dominio Vercel del progetto;
+// se cambia, imposta la env var SITE_URL su Vercel (senza "/" finale).
+const SITE_URL = (process.env.SITE_URL || 'https://elystria-landing.vercel.app').replace(/\/$/, '');
+
 // Estrae nome ed email dal valore di MAIL_FROM (Brevo li vuole separati).
 function parseFrom(raw) {
   const m = raw.match(/^\s*(.*?)\s*<\s*([^>]+?)\s*>\s*$/);
@@ -92,34 +97,63 @@ function emailStandard(lang) {
   };
 }
 
-// ---- Template HTML dell'email (stile oro-su-nero del sito) ----------------
+// ---- Template HTML dell'email (stile oro-su-nero del sito, con immagini) ----
 // Sanifica il nome per inserirlo nell'HTML senza rischi (toglie < > &).
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
-function buildHtml(t, firstName, lang) {
+function buildHtml(t, firstName, lang, winner) {
   const ciao = lang === 'en' ? 'Hi' : 'Ciao';
   const nome = escapeHtml(firstName);
   const greeting = nome ? `${ciao} ${nome},` : (lang === 'en' ? 'Hi,' : 'Ciao,');
+  const ctaLabel = lang === 'en' ? 'Explore the collection' : 'Scopri la collezione';
+
+  // Blocco immagine: per i vincitori mostriamo la foto dell'action figure di Zython.
+  const figureBlock = winner ? `
+      <tr><td style="padding:0 0 24px">
+        <img src="${SITE_URL}/assets/figure-zython.jpg" alt="Action figure Zython" width="280"
+             style="display:block;margin:0 auto;border-radius:10px;border:1px solid rgba(230,192,104,0.25)">
+      </td></tr>` : '';
+
   return `<!DOCTYPE html>
-<html><body style="margin:0;background:#0a0810;font-family:Georgia,'Times New Roman',serif;color:#f0ead8">
-  <div style="max-width:560px;margin:0 auto;padding:40px 28px">
-    <div style="text-align:center;margin-bottom:28px">
-      <div style="font-family:Georgia,serif;font-size:26px;letter-spacing:6px;color:#f8e4b0;font-weight:bold">ELYSTRIA</div>
-      <div style="font-size:14px;color:#9c7a32;font-style:italic;letter-spacing:1px">La Fiamma Primordiale</div>
-    </div>
-    <div style="border:1px solid rgba(230,192,104,0.25);border-radius:12px;background:#0d0b14;padding:36px 30px;text-align:center">
-      <div style="font-size:40px;margin-bottom:14px">🔥</div>
-      <p style="font-size:16px;color:#f0ead8;margin:0 0 14px;text-align:left">${greeting}</p>
-      <h1 style="font-family:Georgia,serif;font-size:22px;color:#f8e4b0;margin:0 0 16px;font-weight:bold">${t.heading}</h1>
-      <p style="font-size:16px;color:#c4baa4;margin:0 0 18px;line-height:1.5">${t.lead}</p>
-      <p style="font-size:17px;color:#ffce4d;font-weight:bold;margin:0 0 18px;line-height:1.5">${t.prize}</p>
-      <p style="font-size:14px;color:#9c7a32;font-style:italic;margin:18px 0 0">${t.foot}</p>
-    </div>
-    <p style="text-align:center;font-size:12px;color:#9c7a32;margin-top:24px;opacity:0.8">
-      Progetto scolastico dimostrativo · GrowUp Agency · Ilaria, Martina e Jolanda
-    </p>
-  </div>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0a0810;font-family:Georgia,'Times New Roman',serif;color:#f0ead8">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0a0810">
+    <tr><td align="center" style="padding:36px 16px">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%">
+
+        <!-- LOGO -->
+        <tr><td align="center" style="padding-bottom:8px">
+          <img src="${SITE_URL}/assets/logo-email.jpg" alt="Elystria" width="240" style="display:block">
+        </td></tr>
+        <tr><td align="center" style="padding-bottom:26px">
+          <div style="font-size:13px;color:#9c7a32;font-style:italic;letter-spacing:2px">La Fiamma Primordiale</div>
+        </td></tr>
+
+        <!-- CARD -->
+        <tr><td style="border:1px solid rgba(230,192,104,0.25);border-radius:14px;background:#0d0b14;padding:34px 30px">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr><td style="font-size:16px;color:#f0ead8;padding-bottom:12px">${greeting}</td></tr>
+            <tr><td align="center" style="font-size:38px;padding-bottom:6px">🔥</td></tr>
+            <tr><td align="center" style="font-family:Georgia,serif;font-size:22px;color:#f8e4b0;font-weight:bold;padding-bottom:14px">${t.heading}</td></tr>
+            <tr><td align="center" style="font-size:16px;color:#c4baa4;line-height:1.5;padding-bottom:16px">${t.lead}</td></tr>
+            ${figureBlock}
+            <tr><td align="center" style="font-size:17px;color:#ffce4d;font-weight:bold;line-height:1.5;padding-bottom:22px">${t.prize}</td></tr>
+            <tr><td align="center" style="padding-bottom:20px">
+              <a href="${SITE_URL}/shop.html" style="display:inline-block;background:#e6c068;color:#0a0810;text-decoration:none;font-family:Georgia,serif;font-weight:bold;font-size:14px;letter-spacing:1px;padding:14px 30px;border-radius:6px">${ctaLabel}</a>
+            </td></tr>
+            <tr><td align="center" style="font-size:14px;color:#9c7a32;font-style:italic">${t.foot}</td></tr>
+          </table>
+        </td></tr>
+
+        <!-- FOOTER -->
+        <tr><td align="center" style="padding-top:22px">
+          <div style="font-size:12px;color:#9c7a32;opacity:0.8">Progetto scolastico dimostrativo · GrowUp Agency · Ilaria, Martina e Jolanda</div>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
 </body></html>`;
 }
 
@@ -193,7 +227,7 @@ export default async function handler(req, res) {
         sender: { name: sender.name, email: sender.email },
         to: [{ email: email, name: (firstName + ' ' + lastName).trim() }],
         subject: t.subject,
-        htmlContent: buildHtml(t, firstName, lang)
+        htmlContent: buildHtml(t, firstName, lang, winner)
       })
     });
 

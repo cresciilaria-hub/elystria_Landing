@@ -35,6 +35,9 @@
   }
   header.scrolled{padding:12px 42px}
   .brand{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.18em;color:var(--oro-chiaro);text-decoration:none;text-shadow:0 0 18px rgba(230,192,104,0.4)}
+  .brand{display:flex;align-items:center}
+  .brand img{height:38px;width:auto;display:block;filter:drop-shadow(0 0 14px rgba(230,192,104,0.35))}
+  header.scrolled .brand img{height:32px;transition:height .3s}
   nav{display:flex;align-items:center;gap:6px}
   nav a,.dropdown-btn{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--testo-soft);text-decoration:none;padding:10px 14px;background:none;border:none;cursor:pointer;position:relative;transition:color .3s}
   nav a:hover,.dropdown-btn:hover{color:var(--oro-chiaro)}
@@ -192,7 +195,7 @@
 <body>
 
 <header id="header">
-  <a href="index.html" class="brand">ELYSTRIA</a>
+  <a href="index.html" class="brand"><img src="assets/logo.png" alt="Elystria"></a>
   <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
   <nav id="nav">
     <a href="index.html" data-it="Registrati" data-en="Sign up">Registrati</a>
