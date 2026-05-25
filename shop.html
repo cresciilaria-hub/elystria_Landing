@@ -163,6 +163,10 @@
   .dm-role{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--oro);margin-bottom:8px}
   .dm-name{font-family:'Cinzel',serif;font-weight:700;font-size:2rem;color:var(--oro-chiaro);letter-spacing:.03em;line-height:1.05}
   .dm-epithet{font-style:italic;color:var(--testo-soft);font-size:1.05rem;margin:8px 0 18px}
+  .dm-toggle{display:inline-flex;border:1px solid var(--bordo);border-radius:30px;overflow:hidden;margin-bottom:18px}
+  .dmt-btn{font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--testo-soft);background:none;border:none;padding:9px 16px;cursor:pointer;transition:all .3s}
+  .dmt-btn.active{background:var(--oro);color:var(--nero);font-weight:700}
+  .dmt-btn#dmtCorr.active{background:var(--viola);color:#fff}
   .dm-text{color:var(--testo-soft);font-size:1.05rem;line-height:1.6;margin-bottom:26px}
   .dm-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
   @media(max-width:680px){.dm-card{grid-template-columns:1fr;max-height:92vh;overflow-y:auto}.dm-img img{min-height:240px;max-height:280px}.dm-body{padding:26px 24px}}
@@ -268,6 +272,10 @@
       <div class="dm-role" id="dmRole"></div>
       <h2 class="dm-name" id="dmName"></h2>
       <div class="dm-epithet" id="dmEpithet"></div>
+      <div class="dm-toggle" id="dmToggle" style="display:none">
+        <button class="dmt-btn active" id="dmtSana" data-it="Forma Sana" data-en="Pure Form">Forma Sana</button>
+        <button class="dmt-btn" id="dmtCorr" data-it="Forma Corrotta" data-en="Corrupted Form">Forma Corrotta</button>
+      </div>
       <p class="dm-text" id="dmText"></p>
       <div class="dm-foot">
         <span class="price" id="dmPrice"></span>
@@ -304,21 +312,29 @@
     {id:'adoria', gruppo:'dio', el:'acqua',  img:'assets/img/adoria.jpg',
       role:{it:'Dio dell\u2019Acqua',en:'God of Water'}, name:{it:'Adoria',en:'Adoria'},
       epithet:{it:'La marea che ricorda la calma',en:'The tide that remembers calm'}, prezzo:39.90,
+      imgCorrotta:'assets/img/adoria_corrotta.jpg',
+      bodyCorrotto:{it:"Corrotta da Zython, Adoria è ora la Necrosirena: uno spettro abissale dagli occhi vuoti, che trascina nelle profondità chiunque osi avvicinarsi al suo santuario sommerso.",en:"Corrupted by Zython, Adoria is now the Necrosiren: an abyssal wraith with hollow eyes, dragging into the depths anyone who dares approach her sunken sanctuary."},
       body:{it:"Adoria incarnava la fluidità e la profondità degli abissi, custode del frammento dell'Acqua. Sotto il giogo di Zython la sua essenza è stata distorta in una creatura degli abissi: la Necrosirena.",
             en:"Adoria embodied the fluidity and depth of the abyss, keeper of the Water shard. Under Zython's yoke his essence was twisted into a creature of the deep: the Necrosiren."}},
     {id:'firyon', gruppo:'dio', el:'fuoco',  img:'assets/img/firyon.jpg',
       role:{it:'Dio del Fuoco',en:'God of Fire'}, name:{it:'Firyon',en:'Firyon'},
       epithet:{it:'La fiamma che fu calore, ora furia',en:'The flame that was warmth, now fury'}, prezzo:39.90,
+      imgCorrotta:'assets/img/firyon_corrotta.jpg',
+      bodyCorrotto:{it:"La corruzione ha trasformato Firyon nel Colosso di Lava: una mole di roccia fusa percorsa da crepe incandescenti, mosso solo da furia distruttrice.",en:"Corruption turned Firyon into the Lava Colossus: a mass of molten rock crossed by incandescent cracks, driven only by destructive fury."},
       body:{it:"Firyon rappresentava il calore vitale e la forza creatrice del fuoco. La corruzione lo ha trasformato in una mole di roccia fusa e rabbia incandescente: il Colosso di Lava.",
             en:"Firyon represented the vital warmth and creative force of fire. Corruption turned him into a mass of molten rock and incandescent rage: the Lava Colossus."}},
     {id:'gairok', gruppo:'dio', el:'terra',  img:'assets/img/gairok.jpg',
       role:{it:'Dio della Terra',en:'God of Earth'}, name:{it:'Gairok',en:'Gairok'},
       epithet:{it:'La radice che divenne prigione',en:'The root that became a prison'}, prezzo:39.90,
+      imgCorrotta:'assets/img/gairok_corrotta.jpg',
+      bodyCorrotto:{it:"Corrotto, Gairok è divenuto un titano arboreo: radici e rami nodosi gli ricoprono il corpo, e ha inghiottito la foresta del suo regno in un abbraccio soffocante.",en:"Corrupted, Gairok became an arboreal titan: gnarled roots and branches cover his body, and he has swallowed the forest of his realm in a suffocating embrace."},
       body:{it:"Gairok era la stabilità e la forza generatrice della terra, custode del frammento della Terra. Corrotto da Zython, è ora un'immensa entità arborea che ha inghiottito la foresta intorno a sé.",
             en:"Gairok was the stability and generative force of the earth, keeper of the Earth shard. Corrupted by Zython, he is now an immense tree-like entity that has swallowed the forest around him."}},
     {id:'neraya', gruppo:'dio', el:'aria',   img:'assets/img/neraya.jpg',
       role:{it:'Dea dell\u2019Aria',en:'Goddess of Air'}, name:{it:'Neraya',en:'Neraya'},
       epithet:{it:'Il vento spezzato in tempesta',en:'The wind broken into storm'}, prezzo:39.90,
+      imgCorrotta:'assets/img/neraya_corrotta.jpg',
+      bodyCorrotto:{it:"Ridotta a spettro instabile, Neraya corrotta vaga tra le correnti come un fantasma di vento e tempesta, urlando con la voce dei cieli spezzati.",en:"Reduced to an unstable specter, the corrupted Neraya roams the currents like a ghost of wind and storm, screaming with the voice of broken skies."},
       body:{it:"Neraya incarnava la leggerezza e la libertà dei cieli, custode del frammento dell'Aria. La corruzione l'ha ridotta a uno spirito etereo instabile, intrappolato fra le correnti del suo stesso santuario.",
             en:"Neraya embodied the lightness and freedom of the skies, keeper of the Air shard. Corruption reduced her to an unstable ethereal spirit, trapped among the currents of her own sanctuary."}}
   ];
@@ -466,21 +482,41 @@
 
   /* ====== MODALE DETTAGLIO PERSONAGGIO ====== */
   const detailModal=document.getElementById('detailModal');
+  const dmToggle=document.getElementById('dmToggle');
+  const dmtSana=document.getElementById('dmtSana');
+  const dmtCorr=document.getElementById('dmtCorr');
   let detailProd=null;
+
+  function setDetailForm(p, corrotta){
+    document.getElementById('dmImg').src = corrotta ? p.imgCorrotta : p.img;
+    document.getElementById('dmImg').alt = p.name[currentLang];
+    const tx=document.getElementById('dmText');
+    const body = corrotta ? p.bodyCorrotto : p.body;
+    tx.setAttribute('data-it',body.it);tx.setAttribute('data-en',body.en);tx.textContent=body[currentLang];
+    dmtSana.classList.toggle('active',!corrotta);
+    dmtCorr.classList.toggle('active',corrotta);
+  }
+
   function openDetail(p){
     detailProd=p;
-    document.getElementById('dmImg').src=p.img;
-    document.getElementById('dmImg').alt=p.name[currentLang];
     const role=document.getElementById('dmRole');
     role.setAttribute('data-it',p.role.it);role.setAttribute('data-en',p.role.en);role.textContent=p.role[currentLang];
     document.getElementById('dmName').textContent=p.name[currentLang];
     const ep=document.getElementById('dmEpithet');
     ep.setAttribute('data-it',p.epithet.it);ep.setAttribute('data-en',p.epithet.en);ep.textContent=p.epithet[currentLang];
-    const tx=document.getElementById('dmText');
-    tx.setAttribute('data-it',p.body.it);tx.setAttribute('data-en',p.body.en);tx.textContent=p.body[currentLang];
     document.getElementById('dmPrice').textContent=fmt(p.prezzo);
+    // lo switch Sana/Corrotta appare solo per i 4 Dèi (che hanno imgCorrotta)
+    if(p.imgCorrotta){
+      dmToggle.style.display='inline-flex';
+    } else {
+      dmToggle.style.display='none';
+    }
+    setDetailForm(p, false);
     detailModal.classList.add('open');
   }
+  dmtSana.addEventListener('click',()=>{if(detailProd)setDetailForm(detailProd,false);});
+  dmtCorr.addEventListener('click',()=>{if(detailProd&&detailProd.imgCorrotta)setDetailForm(detailProd,true);});
+
   function closeDetail(){detailModal.classList.remove('open');}
   document.getElementById('dmClose').addEventListener('click',closeDetail);
   detailModal.addEventListener('click',e=>{if(e.target===detailModal)closeDetail();});
