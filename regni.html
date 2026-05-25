@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I Regni — Elystria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nero:#0a0810;--oro:#e6c068;--oro-chiaro:#f8e4b0;--oro-scuro:#9c7a32;
+    --fiamma:#ffce4d;--testo:#f0ead8;--testo-soft:#c4baa4;--bordo:rgba(230,192,104,0.25);
+    --viola:#8b5cf6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--nero);color:var(--testo);font-family:'Cormorant Garamond',serif;font-size:18px;overflow-x:hidden;line-height:1.6}
+
+  /* MENU (identico alle altre pagine) */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 42px;transition:all .4s ease}
+  header.scrolled{background:rgba(10,8,16,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--bordo);padding:12px 42px}
+  .brand{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.18em;color:var(--oro-chiaro);text-decoration:none;text-shadow:0 0 18px rgba(230,192,104,0.4)}
+  nav{display:flex;align-items:center;gap:6px}
+  nav a,.dropdown-btn{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--testo-soft);text-decoration:none;padding:10px 14px;background:none;border:none;cursor:pointer;position:relative;transition:color .3s}
+  nav a:hover,.dropdown-btn:hover,nav a.active,.dropdown-btn.active{color:var(--oro-chiaro)}
+  nav a::after{content:'';position:absolute;left:14px;right:14px;bottom:4px;height:1px;background:var(--oro);transform:scaleX(0);transition:transform .3s}
+  nav a:hover::after,nav a.active::after{transform:scaleX(1)}
+  .dropdown{position:relative}
+  .dropdown-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(13,11,20,0.98);border:1px solid var(--bordo);border-radius:4px;min-width:190px;padding:8px 0;opacity:0;visibility:hidden;transition:all .3s;box-shadow:0 20px 50px rgba(0,0,0,0.6)}
+  .dropdown:hover .dropdown-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(4px)}
+  .dropdown-menu a{display:block;padding:10px 22px;text-align:left}
+  .dropdown-menu a::after{display:none}
+  .dropdown-menu a:hover{background:rgba(230,192,104,0.08)}
+  .lang{display:flex;gap:2px;margin-left:14px;border:1px solid var(--bordo);border-radius:3px;overflow:hidden}
+  .lang button{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.1em;background:none;border:none;color:var(--testo-soft);padding:7px 11px;cursor:pointer;transition:all .25s}
+  .lang button.active{background:var(--oro);color:var(--nero);font-weight:700}
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .burger span{width:26px;height:2px;background:var(--oro-chiaro);transition:.3s}
+
+  /* HERO di pagina */
+  .page-hero{position:relative;height:62vh;min-height:440px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+  .page-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center 45%;filter:brightness(.5) saturate(1.05)}
+  .page-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(10,8,16,0.85) 75%),linear-gradient(180deg,rgba(10,8,16,0.7),transparent 40%,rgba(10,8,16,0.95))}
+  .page-hero-inner{position:relative;z-index:2;padding:0 24px}
+  .page-kicker{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.5em;text-transform:uppercase;color:var(--oro-chiaro);margin-bottom:18px;opacity:0;animation:fadeUp 1s ease .2s forwards}
+  .page-title{font-family:'Cinzel',serif;font-weight:800;font-size:clamp(2.6rem,7vw,5rem);color:var(--oro-chiaro);letter-spacing:.04em;text-shadow:0 0 50px rgba(255,206,77,0.4);opacity:0;animation:fadeUp 1s ease .4s forwards}
+  .page-subtitle{font-style:italic;font-size:clamp(1.1rem,2.5vw,1.5rem);color:var(--testo);margin-top:18px;opacity:0;animation:fadeUp 1s ease .6s forwards}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+  /* INTRO */
+  .intro{max-width:860px;margin:0 auto;padding:80px 24px 20px;text-align:center}
+  .intro p{font-size:1.2rem;color:var(--testo-soft)}
+  .intro .hint{margin-top:26px;font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro-scuro)}
+  .intro .hint span{color:var(--oro-chiaro)}
+
+  /* ====== REGNO ====== */
+  .realms{max-width:1180px;margin:0 auto;padding:50px 32px 30px;display:flex;flex-direction:column;gap:90px}
+  .realm{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+  .realm.reverse .realm-info{order:2}
+  .realm.reverse .realm-compare{order:1}
+
+  /* comparatore slider */
+  .realm-compare{position:relative;width:100%;aspect-ratio:16/10;border-radius:10px;overflow:hidden;border:1px solid var(--bordo);box-shadow:0 30px 70px rgba(0,0,0,0.6),0 0 50px rgba(230,192,104,0.08);user-select:none;cursor:ew-resize}
+  .cmp-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+  .cmp-corr{z-index:1}
+  .cmp-sana-wrap{position:absolute;inset:0;z-index:2;width:50%;overflow:hidden;will-change:width}
+  .cmp-sana{position:absolute;inset:0;height:100%}
+  .cmp-sana img{height:100%;width:auto;max-width:none;object-fit:cover}
+  /* etichette */
+  .cmp-tag{position:absolute;top:14px;z-index:5;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;padding:6px 12px;border-radius:30px;background:rgba(10,8,16,0.6);backdrop-filter:blur(4px);border:1px solid var(--bordo)}
+  .cmp-tag.sana{left:14px;color:var(--oro-chiaro)}
+  .cmp-tag.corr{right:14px;color:var(--viola)}
+  /* maniglia */
+  .cmp-handle{position:absolute;top:0;bottom:0;z-index:6;width:2px;background:var(--oro-chiaro);left:50%;transform:translateX(-50%);box-shadow:0 0 16px rgba(255,206,77,.6);pointer-events:none}
+  .cmp-handle::after{content:'⟺';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:var(--oro);color:var(--nero);display:flex;align-items:center;justify-content:center;font-size:1.1rem;box-shadow:0 4px 18px rgba(0,0,0,.5)}
+
+  /* info */
+  .realm-el{display:inline-flex;align-items:center;gap:10px;font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;padding:8px 16px;border-radius:30px;margin-bottom:18px;border:1px solid}
+  .realm-el .dot{width:9px;height:9px;border-radius:50%}
+  .realm-name{font-family:'Cinzel',serif;font-weight:800;font-size:clamp(1.8rem,3.5vw,2.7rem);color:var(--oro-chiaro);line-height:1.06;letter-spacing:.02em;margin-bottom:8px}
+  .realm-sub{font-style:italic;font-size:1.15rem;color:var(--testo-soft);margin-bottom:18px}
+  .realm-desc{font-size:1.12rem;color:var(--testo);margin-bottom:22px}
+  .realm-desc .hl{color:var(--fiamma);font-style:italic}
+  .realm-meta{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bordo);border:1px solid var(--bordo);border-radius:8px;overflow:hidden}
+  .realm-meta div{background:rgba(10,8,16,0.7);padding:13px 18px}
+  .realm-meta .m-label{font-family:'Cinzel',serif;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro-scuro);margin-bottom:5px}
+  .realm-meta .m-val{font-family:'Cinzel',serif;font-size:1.02rem;letter-spacing:.02em;color:var(--oro-chiaro)}
+  .realm-meta .m-val.corr{color:var(--viola)}
+  .realm-boss{margin-top:14px;display:flex;align-items:center;gap:10px;font-size:1rem;color:var(--testo-soft)}
+  .realm-boss .sw{color:var(--oro);font-size:1.12rem}
+
+  /* colori elementali */
+  .el-acqua .realm-el{color:#7fe3ef;border-color:rgba(94,209,255,.5)} .el-acqua .dot{background:#5ad1ff;box-shadow:0 0 12px #5ad1ff}
+  .el-fuoco .realm-el{color:#ffb066;border-color:rgba(255,123,46,.5)} .el-fuoco .dot{background:#ff7b2e;box-shadow:0 0 12px #ff7b2e}
+  .el-terra .realm-el{color:#a8d98a;border-color:rgba(123,189,79,.5)} .el-terra .dot{background:#7bbd4f;box-shadow:0 0 12px #7bbd4f}
+  .el-aria  .realm-el{color:#dce7ff;border-color:rgba(191,212,255,.5)} .el-aria .dot{background:#cfe0ff;box-shadow:0 0 12px #cfe0ff}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  /* sinergie */
+  .map{max-width:1180px;margin:0 auto;padding:100px 32px}
+  .map h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--oro-chiaro);text-align:center;margin-bottom:14px}
+  .map .map-note{text-align:center;color:var(--testo-soft);font-style:italic;margin-bottom:50px}
+  .syn-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:760px;margin:0 auto}
+  .syn{border:1px solid var(--bordo);border-radius:8px;padding:26px 28px;background:rgba(13,11,20,0.6);text-align:center}
+  .syn .syn-form{font-family:'Cinzel',serif;font-size:.95rem;letter-spacing:.1em;color:var(--testo-soft);margin-bottom:8px}
+  .syn .syn-res{font-family:'Cinzel',serif;font-size:1.3rem;color:var(--fiamma);letter-spacing:.03em}
+
+  footer{position:relative;z-index:2;border-top:1px solid var(--bordo);padding:50px 24px 40px;text-align:center;background:rgba(10,8,16,0.7)}
+  footer .f-title{font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.2em;color:var(--oro);margin-bottom:12px}
+  footer p{font-size:.95rem;color:var(--testo-soft);margin:4px 0}
+  footer .placeholder{color:var(--oro-scuro);font-style:italic;opacity:.7}
+
+  @media(max-width:880px){
+    header{padding:14px 20px}
+    nav{position:fixed;top:0;right:-100%;width:78%;max-width:340px;height:100vh;flex-direction:column;align-items:flex-start;gap:0;background:rgba(10,9,16,0.99);backdrop-filter:blur(16px);padding:90px 30px 30px;transition:right .4s ease;border-left:1px solid var(--bordo);overflow-y:auto}
+    nav.open{right:0}
+    nav a,.dropdown-btn{width:100%;padding:14px 0;font-size:.9rem}
+    .dropdown{width:100%}
+    .dropdown-menu{position:static;transform:none;opacity:1;visibility:visible;background:rgba(255,255,255,0.02);border:none;box-shadow:none;max-height:0;overflow:hidden;transition:max-height .3s;padding:0}
+    .dropdown.open-mob .dropdown-menu{max-height:300px;padding:4px 0}
+    .lang{margin:20px 0 0 0}
+    .burger{display:flex;z-index:101}
+    .realm{grid-template-columns:1fr;gap:26px}
+    .realm.reverse .realm-info,.realm.reverse .realm-compare{order:0}
+    .syn-grid{grid-template-columns:1fr}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <a href="index.html" class="brand">ELYSTRIA</a>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="nav">
+    <a href="index.html" data-it="Home" data-en="Home">Home</a>
+    <a href="team.html" data-it="Il Team" data-en="The Team">Il Team</a>
+    <a href="progetto.html" data-it="Il Progetto" data-en="The Project">Il Progetto</a>
+    <a href="storia.html" data-it="Storia" data-en="Story">Storia</a>
+    <div class="dropdown" id="dropGioco">
+      <button class="dropdown-btn active" data-it="Il Gioco ▾" data-en="The Game ▾">Il Gioco ▾</button>
+      <div class="dropdown-menu">
+        <a href="personaggi.html" data-it="Personaggi" data-en="Characters">Personaggi</a>
+        <a href="regni.html" class="active" data-it="I Regni" data-en="The Realms">I Regni</a>
+        <a href="meccaniche.html" data-it="Meccaniche" data-en="Mechanics">Meccaniche</a>
+        <a href="galleria.html" data-it="Galleria" data-en="Gallery">Galleria</a>
+      </div>
+    </div>
+    <a href="timeline.html" data-it="Timeline" data-en="Timeline">Timeline</a>
+    <a href="registrati.html" data-it="Registrati" data-en="Sign up">Registrati</a>
+    <a href="shop.html" data-it="Shop" data-en="Shop">Shop</a>
+    <div class="lang">
+      <button id="lang-it" class="active" onclick="setLang('it')">IT</button>
+      <button id="lang-en" onclick="setLang('en')">EN</button>
+    </div>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="page-hero-bg" style="background-image:url(assets/img/reg_aria_corr.jpg)"></div>
+  <div class="page-hero-inner">
+    <div class="page-kicker" data-it="Quattro elementi, quattro prigioni" data-en="Four elements, four prisons">Quattro elementi, quattro prigioni</div>
+    <h1 class="page-title" data-it="I Regni" data-en="The Realms">I Regni</h1>
+    <p class="page-subtitle" data-it="Le terre corrotte dove dormono gli Dei caduti" data-en="The corrupted lands where the fallen Gods sleep">Le terre corrotte dove dormono gli Dei caduti</p>
+  </div>
+</section>
+
+<section class="intro reveal">
+  <p data-it="Ogni frammento della Fiamma è legato a un elemento e a un Dio. Un tempo erano terre di pura bellezza; quando Zython li corruppe, divennero arene mortali. Theron dovrà attraversarle tutte." data-en="Each shard of the Flame is bound to an element and a God. Once they were lands of pure beauty; when Zython corrupted them, they became deadly arenas. Theron must cross them all.">Ogni frammento della Fiamma è legato a un elemento e a un Dio. Un tempo erano terre di pura bellezza; quando Zython li corruppe, divennero arene mortali. Theron dovrà attraversarle tutte.</p>
+  <div class="hint" data-it="↔ Trascina il cursore per vedere la corruzione" data-en="↔ Drag the slider to reveal the corruption">↔ Trascina il cursore per vedere la corruzione</div>
+</section>
+
+<div class="realms">
+
+  <!-- ACQUA -->
+  <section class="realm el-acqua reveal">
+    <div class="realm-info">
+      <span class="realm-el"><span class="dot"></span><span data-it="Elemento · Acqua" data-en="Element · Water">Elemento · Acqua</span></span>
+      <h2 class="realm-name" data-it="Tempio Sommerso" data-en="Sunken Temple">Tempio Sommerso</h2>
+      <div class="realm-sub" data-it="Le rovine inghiottite dagli abissi" data-en="Ruins swallowed by the deep">Le rovine inghiottite dagli abissi</div>
+      <p class="realm-desc" data-it="Un tempo giardino sottomarino fiorito e luminoso, oggi un santuario sprofondato nell'oscurità degli abissi. Qui regna <span class='hl'>Adoria</span>, ridotta a una creatura delle profondità." data-en="Once a blooming, luminous underwater garden, now a sanctuary sunk into the darkness of the deep. Here reigns <span class='hl'>Adoria</span>, reduced to a creature of the depths.">Un tempo giardino sottomarino fiorito e luminoso, oggi un santuario sprofondato nell'oscurità degli abissi. Qui regna <span class="hl">Adoria</span>, ridotta a una creatura delle profondità.</p>
+      <div class="realm-meta">
+        <div><div class="m-label" data-it="Dio custode" data-en="Guardian God">Dio custode</div><div class="m-val" data-it="Adoria" data-en="Adoria">Adoria</div></div>
+        <div><div class="m-label" data-it="Forma corrotta" data-en="Corrupted form">Forma corrotta</div><div class="m-val corr" data-it="Necrosirena" data-en="Necrosiren">Necrosirena</div></div>
+      </div>
+      <div class="realm-boss"><span class="sw">⚔</span><span data-it="Sinergia: Acqua + Vento = Tempesta Cinetica" data-en="Synergy: Water + Wind = Kinetic Storm">Sinergia: Acqua + Vento = Tempesta Cinetica</span></div>
+    </div>
+    <div class="realm-compare" data-sana="assets/img/reg_acqua_sana.jpg" data-corr="assets/img/reg_acqua_corr.jpg">
+      <span class="cmp-tag sana" data-it="Sana" data-en="Pure">Sana</span>
+      <span class="cmp-tag corr" data-it="Corrotta" data-en="Corrupted">Corrotta</span>
+    </div>
+  </section>
+
+  <!-- FUOCO -->
+  <section class="realm el-fuoco reverse reveal">
+    <div class="realm-info">
+      <span class="realm-el"><span class="dot"></span><span data-it="Elemento · Fuoco" data-en="Element · Fire">Elemento · Fuoco</span></span>
+      <h2 class="realm-name" data-it="Vulcano del Cuore Fuso" data-en="Volcano of the Molten Heart">Vulcano del Cuore Fuso</h2>
+      <div class="realm-sub" data-it="La fucina incandescente del mondo" data-en="The world's incandescent forge">La fucina incandescente del mondo</div>
+      <p class="realm-desc" data-it="Un santuario di calore vitale e luce dorata, trasformato in caverne di lava infernale dove ogni passo è una prova. Nel suo cuore si erge <span class='hl'>Firyon</span>, colosso di pietra e fuoco." data-en="A sanctuary of vital warmth and golden light, turned into caverns of infernal lava where every step is a trial. At its heart stands <span class='hl'>Firyon</span>, a colossus of stone and fire.">Un santuario di calore vitale e luce dorata, trasformato in caverne di lava infernale dove ogni passo è una prova. Nel suo cuore si erge <span class="hl">Firyon</span>, colosso di pietra e fuoco.</p>
+      <div class="realm-meta">
+        <div><div class="m-label" data-it="Dio custode" data-en="Guardian God">Dio custode</div><div class="m-val" data-it="Firyon" data-en="Firyon">Firyon</div></div>
+        <div><div class="m-label" data-it="Forma corrotta" data-en="Corrupted form">Forma corrotta</div><div class="m-val corr" data-it="Colosso di Lava" data-en="Lava Colossus">Colosso di Lava</div></div>
+      </div>
+      <div class="realm-boss"><span class="sw">⚔</span><span data-it="Sinergia: Terra + Fuoco = Eruzione Vulcanica" data-en="Synergy: Earth + Fire = Volcanic Eruption">Sinergia: Terra + Fuoco = Eruzione Vulcanica</span></div>
+    </div>
+    <div class="realm-compare" data-sana="assets/img/reg_fuoco_sana.jpg" data-corr="assets/img/reg_fuoco_corr.jpg">
+      <span class="cmp-tag sana" data-it="Sana" data-en="Pure">Sana</span>
+      <span class="cmp-tag corr" data-it="Corrotta" data-en="Corrupted">Corrotta</span>
+    </div>
+  </section>
+
+  <!-- TERRA -->
+  <section class="realm el-terra reveal">
+    <div class="realm-info">
+      <span class="realm-el"><span class="dot"></span><span data-it="Elemento · Terra" data-en="Element · Earth">Elemento · Terra</span></span>
+      <h2 class="realm-name" data-it="Foresta Distorta" data-en="Twisted Forest">Foresta Distorta</h2>
+      <div class="realm-sub" data-it="Dove le radici imprigionano la luce" data-en="Where roots imprison the light">Dove le radici imprigionano la luce</div>
+      <p class="realm-desc" data-it="Una selva un tempo rigogliosa e in fiore, piegata dalla corruzione in un intrico di alberi contorti e radici soffocanti. Al suo centro veglia <span class='hl'>Gairok</span>, fuso con la foresta stessa." data-en="A once-lush, blooming forest bent by corruption into a tangle of twisted trees and choking roots. At its center watches <span class='hl'>Gairok</span>, merged with the forest itself.">Una selva un tempo rigogliosa e in fiore, piegata dalla corruzione in un intrico di alberi contorti e radici soffocanti. Al suo centro veglia <span class="hl">Gairok</span>, fuso con la foresta stessa.</p>
+      <div class="realm-meta">
+        <div><div class="m-label" data-it="Dio custode" data-en="Guardian God">Dio custode</div><div class="m-val" data-it="Gairok" data-en="Gairok">Gairok</div></div>
+        <div><div class="m-label" data-it="Forma corrotta" data-en="Corrupted form">Forma corrotta</div><div class="m-val corr" data-it="Mostro-Albero" data-en="Tree-Monster">Mostro-Albero</div></div>
+      </div>
+      <div class="realm-boss"><span class="sw">⚔</span><span data-it="Sinergia: Terra + Fuoco = Eruzione Vulcanica" data-en="Synergy: Earth + Fire = Volcanic Eruption">Sinergia: Terra + Fuoco = Eruzione Vulcanica</span></div>
+    </div>
+    <div class="realm-compare" data-sana="assets/img/reg_terra_sana.jpg" data-corr="assets/img/reg_terra_corr.jpg">
+      <span class="cmp-tag sana" data-it="Sana" data-en="Pure">Sana</span>
+      <span class="cmp-tag corr" data-it="Corrotta" data-en="Corrupted">Corrotta</span>
+    </div>
+  </section>
+
+  <!-- ARIA -->
+  <section class="realm el-aria reverse reveal">
+    <div class="realm-info">
+      <span class="realm-el"><span class="dot"></span><span data-it="Elemento · Aria" data-en="Element · Air">Elemento · Aria</span></span>
+      <h2 class="realm-name" data-it="Santuario Sospeso" data-en="Suspended Sanctuary">Santuario Sospeso</h2>
+      <div class="realm-sub" data-it="Il tempio che galleggia tra le nubi" data-en="The temple floating among the clouds">Il tempio che galleggia tra le nubi</div>
+      <p class="realm-desc" data-it="Colonne di marmo che svettano verso un cielo luminoso, oggi frammenti cupi sospesi nel vuoto tra venti impetuosi. Qui dimora <span class='hl'>Neraya</span>, ridotta a uno spirito eterico." data-en="Marble columns soaring toward a luminous sky, now gloomy fragments suspended in the void amid raging winds. Here dwells <span class='hl'>Neraya</span>, reduced to an etheric spirit.">Colonne di marmo che svettano verso un cielo luminoso, oggi frammenti cupi sospesi nel vuoto tra venti impetuosi. Qui dimora <span class="hl">Neraya</span>, ridotta a uno spirito eterico.</p>
+      <div class="realm-meta">
+        <div><div class="m-label" data-it="Dio custode" data-en="Guardian God">Dio custode</div><div class="m-val" data-it="Neraya" data-en="Neraya">Neraya</div></div>
+        <div><div class="m-label" data-it="Forma corrotta" data-en="Corrupted form">Forma corrotta</div><div class="m-val corr" data-it="Spirito Eterico" data-en="Etheric Spirit">Spirito Eterico</div></div>
+      </div>
+      <div class="realm-boss"><span class="sw">⚔</span><span data-it="Sinergia: Acqua + Vento = Tempesta Cinetica" data-en="Synergy: Water + Wind = Kinetic Storm">Sinergia: Acqua + Vento = Tempesta Cinetica</span></div>
+    </div>
+    <div class="realm-compare" data-sana="assets/img/reg_aria_sana.jpg" data-corr="assets/img/reg_aria_corr.jpg">
+      <span class="cmp-tag sana" data-it="Sana" data-en="Pure">Sana</span>
+      <span class="cmp-tag corr" data-it="Corrotta" data-en="Corrupted">Corrotta</span>
+    </div>
+  </section>
+
+</div>
+
+<!-- SINERGIE -->
+<section class="map reveal">
+  <h2 data-it="Le Sinergie Elementali" data-en="Elemental Synergies">Le Sinergie Elementali</h2>
+  <p class="map-note" data-it="Combinando i poteri degli Dei liberati, Theron sblocca nuove forze" data-en="By combining the powers of the freed Gods, Theron unlocks new forces">Combinando i poteri degli Dei liberati, Theron sblocca nuove forze</p>
+  <div class="syn-grid">
+    <div class="syn reveal">
+      <div class="syn-form" data-it="Acqua + Vento" data-en="Water + Wind">Acqua + Vento</div>
+      <div class="syn-res" data-it="Tempesta Cinetica" data-en="Kinetic Storm">Tempesta Cinetica</div>
+    </div>
+    <div class="syn reveal">
+      <div class="syn-form" data-it="Terra + Fuoco" data-en="Earth + Fire">Terra + Fuoco</div>
+      <div class="syn-res" data-it="Eruzione Vulcanica" data-en="Volcanic Eruption">Eruzione Vulcanica</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-title">ELYSTRIA — La Fiamma Primordiale</div>
+  <p class="placeholder" data-it="Nome scuola · Classe · Anno scolastico (da inserire)" data-en="School name · Class · School year (to be added)">Nome scuola · Classe · Anno scolastico (da inserire)</p>
+  <p data-it="Progetto realizzato da Ilaria, Martina e Jolanda" data-en="Project created by Ilaria, Martina and Jolanda">Progetto realizzato da Ilaria, Martina e Jolanda</p>
+</footer>
+
+<script>
+  function setLang(lang){
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-it]').forEach(el=>{const t=el.getAttribute('data-'+lang);if(t!==null)el.innerHTML=t});
+    document.getElementById('lang-it').classList.toggle('active',lang==='it');
+    document.getElementById('lang-en').classList.toggle('active',lang==='en');
+  }
+  const header=document.getElementById('header');
+  window.addEventListener('scroll',()=>header.classList.toggle('scrolled',window.scrollY>40));
+  const burger=document.getElementById('burger'),nav=document.getElementById('nav');
+  burger.addEventListener('click',()=>nav.classList.toggle('open'));
+  document.getElementById('dropGioco').querySelector('.dropdown-btn').addEventListener('click',e=>{if(window.innerWidth<=880){e.preventDefault();document.getElementById('dropGioco').classList.toggle('open-mob')}});
+
+  /* COMPARATORE sana/corrotta */
+  document.querySelectorAll('.realm-compare').forEach(box=>{
+    const sana=box.getAttribute('data-sana'), corr=box.getAttribute('data-corr');
+    const ic=document.createElement('img'); ic.className='cmp-img cmp-corr'; ic.src=corr; ic.alt='corrotta'; box.appendChild(ic);
+    const wrap=document.createElement('div'); wrap.className='cmp-sana-wrap';
+    const inner=document.createElement('div'); inner.className='cmp-sana';
+    const is=document.createElement('img'); is.src=sana; is.alt='sana';
+    inner.appendChild(is); wrap.appendChild(inner); box.appendChild(wrap);
+    function sizeInner(){ const w=box.clientWidth; inner.style.width=w+'px'; is.style.width=w+'px'; }
+    sizeInner(); window.addEventListener('resize',sizeInner);
+    const handle=document.createElement('div'); handle.className='cmp-handle'; box.appendChild(handle);
+    let pos=50;
+    function setPos(p){ pos=Math.max(0,Math.min(100,p)); wrap.style.width=pos+'%'; handle.style.left=pos+'%'; }
+    setPos(50);
+    function fromEvent(e){
+      const rect=box.getBoundingClientRect();
+      const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+      setPos(x/rect.width*100);
+    }
+    let dragging=false;
+    box.addEventListener('mousedown',e=>{dragging=true;fromEvent(e);});
+    window.addEventListener('mousemove',e=>{if(dragging)fromEvent(e);});
+    window.addEventListener('mouseup',()=>dragging=false);
+    box.addEventListener('touchstart',e=>{dragging=true;fromEvent(e);},{passive:true});
+    window.addEventListener('touchmove',e=>{if(dragging)fromEvent(e);},{passive:true});
+    window.addEventListener('touchend',()=>dragging=false);
+  });
+
+  /* reveal */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

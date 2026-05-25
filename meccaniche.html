@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meccaniche — Elystria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nero:#0a0810;--oro:#e6c068;--oro-chiaro:#f8e4b0;--oro-scuro:#9c7a32;
+    --fiamma:#ffce4d;--testo:#f0ead8;--testo-soft:#c4baa4;--bordo:rgba(230,192,104,0.25);
+    --viola:#8b5cf6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--nero);color:var(--testo);font-family:'Cormorant Garamond',serif;font-size:18px;overflow-x:hidden;line-height:1.6}
+
+  /* MENU */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 42px;transition:all .4s ease}
+  header.scrolled{background:rgba(10,8,16,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--bordo);padding:12px 42px}
+  .brand{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.18em;color:var(--oro-chiaro);text-decoration:none;text-shadow:0 0 18px rgba(230,192,104,0.4)}
+  nav{display:flex;align-items:center;gap:6px}
+  nav a,.dropdown-btn{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--testo-soft);text-decoration:none;padding:10px 14px;background:none;border:none;cursor:pointer;position:relative;transition:color .3s}
+  nav a:hover,.dropdown-btn:hover,nav a.active,.dropdown-btn.active{color:var(--oro-chiaro)}
+  nav a::after{content:'';position:absolute;left:14px;right:14px;bottom:4px;height:1px;background:var(--oro);transform:scaleX(0);transition:transform .3s}
+  nav a:hover::after,nav a.active::after{transform:scaleX(1)}
+  .dropdown{position:relative}
+  .dropdown-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(13,11,20,0.98);border:1px solid var(--bordo);border-radius:4px;min-width:190px;padding:8px 0;opacity:0;visibility:hidden;transition:all .3s;box-shadow:0 20px 50px rgba(0,0,0,0.6)}
+  .dropdown:hover .dropdown-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(4px)}
+  .dropdown-menu a{display:block;padding:10px 22px;text-align:left}
+  .dropdown-menu a::after{display:none}
+  .dropdown-menu a:hover{background:rgba(230,192,104,0.08)}
+  .lang{display:flex;gap:2px;margin-left:14px;border:1px solid var(--bordo);border-radius:3px;overflow:hidden}
+  .lang button{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.1em;background:none;border:none;color:var(--testo-soft);padding:7px 11px;cursor:pointer;transition:all .25s}
+  .lang button.active{background:var(--oro);color:var(--nero);font-weight:700}
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .burger span{width:26px;height:2px;background:var(--oro-chiaro);transition:.3s}
+
+  /* HERO */
+  .page-hero{position:relative;height:58vh;min-height:420px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+  .page-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center 30%;filter:brightness(.45) saturate(1.05)}
+  .page-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(10,8,16,0.85) 75%),linear-gradient(180deg,rgba(10,8,16,0.7),transparent 40%,rgba(10,8,16,0.95))}
+  .page-hero-inner{position:relative;z-index:2;padding:0 24px}
+  .page-kicker{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.5em;text-transform:uppercase;color:var(--oro-chiaro);margin-bottom:18px;opacity:0;animation:fadeUp 1s ease .2s forwards}
+  .page-title{font-family:'Cinzel',serif;font-weight:800;font-size:clamp(2.6rem,7vw,5rem);color:var(--oro-chiaro);letter-spacing:.04em;text-shadow:0 0 50px rgba(255,206,77,0.4);opacity:0;animation:fadeUp 1s ease .4s forwards}
+  .page-subtitle{font-style:italic;font-size:clamp(1.1rem,2.5vw,1.5rem);color:var(--testo);margin-top:18px;opacity:0;animation:fadeUp 1s ease .6s forwards}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:90px 32px}
+  .sec-head{text-align:center;max-width:820px;margin:0 auto 50px}
+  .sec-head .label{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.35em;text-transform:uppercase;color:var(--oro-scuro);margin-bottom:14px}
+  .sec-head h2{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.8rem,4.5vw,2.7rem);color:var(--oro-chiaro);margin-bottom:18px}
+  .sec-head p{font-size:1.18rem;color:var(--testo-soft)}
+
+  /* due pilastri genere */
+  .genre{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:100px}
+  .genre-card{border:1px solid var(--bordo);border-radius:10px;padding:38px 36px;background:rgba(13,11,20,0.55);transition:transform .4s,border-color .4s}
+  .genre-card:hover{transform:translateY(-6px);border-color:var(--oro)}
+  .genre-card .g-ico{font-size:2.2rem;margin-bottom:16px}
+  .genre-card h3{font-family:'Cinzel',serif;font-size:1.4rem;color:var(--oro-chiaro);letter-spacing:.02em;margin-bottom:14px}
+  .genre-card p{font-size:1.1rem;color:var(--testo-soft)}
+
+  /* feature alternate con immagine */
+  .feature{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;margin-bottom:90px}
+  .feature.reverse .f-text{order:2}.feature.reverse .f-img{order:1}
+  .f-img{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:4/3;border:1px solid var(--bordo);box-shadow:0 30px 70px rgba(0,0,0,0.6),0 0 50px rgba(230,192,104,0.08)}
+  .f-img img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s ease}
+  .f-img:hover img{transform:scale(1.06)}
+  .f-text .f-tag{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--oro-scuro);margin-bottom:14px}
+  .f-text h3{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(1.6rem,3.2vw,2.3rem);color:var(--oro-chiaro);line-height:1.1;margin-bottom:18px}
+  .f-text p{font-size:1.14rem;color:var(--testo-soft);margin-bottom:14px}
+  .f-text p .hl{color:var(--fiamma);font-style:italic}
+
+  /* sinergie */
+  .syn-section{margin-bottom:90px}
+  .syn-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;max-width:820px;margin:0 auto}
+  .syn{border:1px solid var(--bordo);border-radius:10px;padding:30px;background:rgba(13,11,20,0.6);text-align:center;position:relative;overflow:hidden}
+  .syn::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--oro-scuro),var(--fiamma),var(--oro-scuro))}
+  .syn .syn-combo{font-family:'Cinzel',serif;font-size:1rem;letter-spacing:.08em;color:var(--testo-soft);margin-bottom:10px}
+  .syn .syn-combo .plus{color:var(--oro);margin:0 8px}
+  .syn .syn-arrow{color:var(--oro-scuro);font-size:1.2rem;margin:6px 0}
+  .syn .syn-res{font-family:'Cinzel',serif;font-size:1.5rem;color:var(--fiamma);letter-spacing:.03em}
+
+  /* arsenale */
+  .arsenal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .ars{border:1px solid var(--bordo);border-radius:8px;padding:26px 20px;background:rgba(13,11,20,0.5);text-align:center;transition:transform .35s,border-color .35s}
+  .ars:hover{transform:translateY(-5px);border-color:var(--oro)}
+  .ars .a-ico{font-size:1.8rem;margin-bottom:12px}
+  .ars h4{font-family:'Cinzel',serif;font-size:1.05rem;color:var(--oro-chiaro);letter-spacing:.02em;margin-bottom:8px;line-height:1.2}
+  .ars p{font-size:.98rem;color:var(--testo-soft)}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  footer{position:relative;z-index:2;border-top:1px solid var(--bordo);padding:50px 24px 40px;text-align:center;background:rgba(10,8,16,0.7)}
+  footer .f-title{font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.2em;color:var(--oro);margin-bottom:12px}
+  footer p{font-size:.95rem;color:var(--testo-soft);margin:4px 0}
+  footer .placeholder{color:var(--oro-scuro);font-style:italic;opacity:.7}
+
+  @media(max-width:880px){
+    header{padding:14px 20px}
+    nav{position:fixed;top:0;right:-100%;width:78%;max-width:340px;height:100vh;flex-direction:column;align-items:flex-start;gap:0;background:rgba(10,9,16,0.99);backdrop-filter:blur(16px);padding:90px 30px 30px;transition:right .4s ease;border-left:1px solid var(--bordo);overflow-y:auto}
+    nav.open{right:0}
+    nav a,.dropdown-btn{width:100%;padding:14px 0;font-size:.9rem}
+    .dropdown{width:100%}
+    .dropdown-menu{position:static;transform:none;opacity:1;visibility:visible;background:rgba(255,255,255,0.02);border:none;box-shadow:none;max-height:0;overflow:hidden;transition:max-height .3s;padding:0}
+    .dropdown.open-mob .dropdown-menu{max-height:300px;padding:4px 0}
+    .lang{margin:20px 0 0 0}
+    .burger{display:flex;z-index:101}
+    .genre,.feature{grid-template-columns:1fr;gap:24px}
+    .feature.reverse .f-text,.feature.reverse .f-img{order:0}
+    .syn-grid{grid-template-columns:1fr}
+    .arsenal-grid{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:520px){.arsenal-grid{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <a href="index.html" class="brand">ELYSTRIA</a>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="nav">
+    <a href="index.html" data-it="Home" data-en="Home">Home</a>
+    <a href="team.html" data-it="Il Team" data-en="The Team">Il Team</a>
+    <a href="progetto.html" data-it="Il Progetto" data-en="The Project">Il Progetto</a>
+    <a href="storia.html" data-it="Storia" data-en="Story">Storia</a>
+    <div class="dropdown" id="dropGioco">
+      <button class="dropdown-btn active" data-it="Il Gioco ▾" data-en="The Game ▾">Il Gioco ▾</button>
+      <div class="dropdown-menu">
+        <a href="personaggi.html" data-it="Personaggi" data-en="Characters">Personaggi</a>
+        <a href="regni.html" data-it="I Regni" data-en="The Realms">I Regni</a>
+        <a href="meccaniche.html" class="active" data-it="Meccaniche" data-en="Mechanics">Meccaniche</a>
+        <a href="galleria.html" data-it="Galleria" data-en="Gallery">Galleria</a>
+      </div>
+    </div>
+    <a href="timeline.html" data-it="Timeline" data-en="Timeline">Timeline</a>
+    <a href="registrati.html" data-it="Registrati" data-en="Sign up">Registrati</a>
+    <a href="shop.html" data-it="Shop" data-en="Shop">Shop</a>
+    <div class="lang">
+      <button id="lang-it" class="active" onclick="setLang('it')">IT</button>
+      <button id="lang-en" onclick="setLang('en')">EN</button>
+    </div>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="page-hero-bg" style="background-image:url(assets/img/azione.jpg)"></div>
+  <div class="page-hero-inner">
+    <div class="page-kicker" data-it="Come si gioca" data-en="How it plays">Come si gioca</div>
+    <h1 class="page-title" data-it="Meccaniche" data-en="Mechanics">Meccaniche</h1>
+    <p class="page-subtitle" data-it="Esplorazione, combattimento e il potere degli elementi" data-en="Exploration, combat and the power of the elements">Esplorazione, combattimento e il potere degli elementi</p>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <!-- GENERE -->
+  <div class="sec-head reveal">
+    <div class="label" data-it="Il cuore del gameplay" data-en="The core of gameplay">Il cuore del gameplay</div>
+    <h2 data-it="Un'avventura 3D che fonde due anime" data-en="A 3D adventure blending two souls">Un'avventura 3D che fonde due anime</h2>
+    <p data-it="Elystria unisce l'esplorazione interconnessa di un Metroidvania alla sfida tattica di un Souls-like, in un mondo tridimensionale da attraversare in terza persona." data-en="Elystria combines the interconnected exploration of a Metroidvania with the tactical challenge of a Souls-like, in a three-dimensional world explored in third person.">Elystria unisce l'esplorazione interconnessa di un Metroidvania alla sfida tattica di un Souls-like, in un mondo tridimensionale da attraversare in terza persona.</p>
+  </div>
+  <div class="genre reveal">
+    <div class="genre-card">
+      <div class="g-ico">🗺️</div>
+      <h3 data-it="Metroidvania 3D" data-en="3D Metroidvania">Metroidvania 3D</h3>
+      <p data-it="Un mondo interconnesso che si apre man mano: liberando ogni Dio, Theron assorbe nuovi poteri che gli permettono di raggiungere aree prima inaccessibili. L'esplorazione premia chi torna sui propri passi." data-en="An interconnected world that opens up over time: by freeing each God, Theron absorbs new powers that let him reach previously inaccessible areas. Exploration rewards those who backtrack.">Un mondo interconnesso che si apre man mano: liberando ogni Dio, Theron assorbe nuovi poteri che gli permettono di raggiungere aree prima inaccessibili. L'esplorazione premia chi torna sui propri passi.</p>
+    </div>
+    <div class="genre-card">
+      <div class="g-ico">⚔️</div>
+      <h3 data-it="Sfida Souls-like" data-en="Souls-like challenge">Sfida Souls-like</h3>
+      <p data-it="Combattimento impegnativo e ragionato, dove ogni nemico richiede attenzione e ogni boss è una prova. Gli errori si pagano, ma la padronanza ripaga." data-en="Demanding, deliberate combat where every enemy requires attention and every boss is a trial. Mistakes cost you, but mastery pays off.">Combattimento impegnativo e ragionato, dove ogni nemico richiede attenzione e ogni boss è una prova. Gli errori si pagano, ma la padronanza ripaga.</p>
+    </div>
+  </div>
+
+  <!-- VIGORE -->
+  <div class="feature reveal">
+    <div class="f-text">
+      <div class="f-tag" data-it="Risorsa di combattimento" data-en="Combat resource">Risorsa di combattimento</div>
+      <h3 data-it="Il sistema del Vigore" data-en="The Vigor system">Il sistema del Vigore</h3>
+      <p data-it="Ogni azione in combattimento — attaccare, schivare, parare — consuma <span class='hl'>Vigore</span>. Gestirlo con attenzione è la chiave della sopravvivenza: spendere tutto lascia Theron scoperto, conservarne troppo significa perdere occasioni." data-en="Every action in combat — attacking, dodging, parrying — consumes <span class='hl'>Vigor</span>. Managing it carefully is the key to survival: spending it all leaves Theron exposed, hoarding it means missing openings.">Ogni azione in combattimento — attaccare, schivare, parare — consuma <span class="hl">Vigore</span>. Gestirlo con attenzione è la chiave della sopravvivenza: spendere tutto lascia Theron scoperto, conservarne troppo significa perdere occasioni.</p>
+      <p data-it="Salute e Vigore sono le due risorse che il giocatore deve bilanciare in ogni scontro." data-en="Health and Vigor are the two resources the player must balance in every fight.">Salute e Vigore sono le due risorse che il giocatore deve bilanciare in ogni scontro.</p>
+    </div>
+    <div class="f-img"><img src="assets/img/azione.jpg" alt="Combattimento"></div>
+  </div>
+
+  <!-- SANTUARI -->
+  <div class="feature reverse reveal">
+    <div class="f-text">
+      <div class="f-tag" data-it="Punti di ristoro" data-en="Rest points">Punti di ristoro</div>
+      <h3 data-it="I Santuari di Ophelia" data-en="Ophelia's Sanctuaries">I Santuari di Ophelia</h3>
+      <p data-it="Disseminati per i Regni, i <span class='hl'>Santuari di Ophelia</span> sono rifugi di luce dove Theron può ripristinare Salute e Vigore prima di affrontare gli Dei caduti." data-en="Scattered across the Realms, <span class='hl'>Ophelia's Sanctuaries</span> are havens of light where Theron can restore Health and Vigor before facing the fallen Gods.">Disseminati per i Regni, i <span class="hl">Santuari di Ophelia</span> sono rifugi di luce dove Theron può ripristinare Salute e Vigore prima di affrontare gli Dei caduti.</p>
+      <p data-it="Ma c'è un prezzo: riposare presso un Santuario fa <span class='hl'>rinascere tutti i nemici</span> dell'area. Ogni pausa è un rischio calcolato." data-en="But there's a price: resting at a Sanctuary makes <span class='hl'>all enemies respawn</span> in the area. Every pause is a calculated risk.">Ma c'è un prezzo: riposare presso un Santuario fa <span class="hl">rinascere tutti i nemici</span> dell'area. Ogni pausa è un rischio calcolato.</p>
+    </div>
+    <div class="f-img"><img src="assets/img/keyart.jpg" alt="Santuario"></div>
+  </div>
+
+  <!-- SINERGIE -->
+  <div class="syn-section reveal">
+    <div class="sec-head">
+      <div class="label" data-it="Il potere degli elementi" data-en="The power of elements">Il potere degli elementi</div>
+      <h2 data-it="Le Sinergie Elementali" data-en="Elemental Synergies">Le Sinergie Elementali</h2>
+      <p data-it="Combinando i poteri degli Dei liberati, Theron scatena forze devastanti. La Risonanza Divina gli permette di fondere gli elementi." data-en="By combining the powers of the freed Gods, Theron unleashes devastating forces. Divine Resonance lets him fuse the elements.">Combinando i poteri degli Dei liberati, Theron scatena forze devastanti. La Risonanza Divina gli permette di fondere gli elementi.</p>
+    </div>
+    <div class="syn-grid">
+      <div class="syn">
+        <div class="syn-combo"><span data-it="Acqua" data-en="Water">Acqua</span><span class="plus">+</span><span data-it="Vento" data-en="Wind">Vento</span></div>
+        <div class="syn-arrow">↓</div>
+        <div class="syn-res" data-it="Tempesta Cinetica" data-en="Kinetic Storm">Tempesta Cinetica</div>
+      </div>
+      <div class="syn">
+        <div class="syn-combo"><span data-it="Terra" data-en="Earth">Terra</span><span class="plus">+</span><span data-it="Fuoco" data-en="Fire">Fuoco</span></div>
+        <div class="syn-arrow">↓</div>
+        <div class="syn-res" data-it="Eruzione Vulcanica" data-en="Volcanic Eruption">Eruzione Vulcanica</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARSENALE -->
+  <div class="reveal">
+    <div class="sec-head">
+      <div class="label" data-it="Strumenti dell'eroe" data-en="The hero's tools">Strumenti dell'eroe</div>
+      <h2 data-it="L'Arsenale" data-en="The Arsenal">L'Arsenale</h2>
+      <p data-it="Le armi e gli strumenti con cui Theron affronta la corruzione di Elystria." data-en="The weapons and tools Theron uses to face the corruption of Elystria.">Le armi e gli strumenti con cui Theron affronta la corruzione di Elystria.</p>
+    </div>
+    <div class="arsenal-grid">
+      <div class="ars">
+        <div class="a-ico">🔥</div>
+        <h4 data-it="Spada della Fiamma" data-en="Flame Sword">Spada della Fiamma</h4>
+        <p data-it="L'arma simbolo: incarna la Fiamma Primordiale che solo Theron può brandire." data-en="The signature weapon: it embodies the Primordial Flame only Theron can wield.">L'arma simbolo: incarna la Fiamma Primordiale che solo Theron può brandire.</p>
+      </div>
+      <div class="ars">
+        <div class="a-ico">🗡️</div>
+        <h4 data-it="Lance, asce e archi" data-en="Spears, axes & bows">Lance, asce e archi</h4>
+        <p data-it="Un arsenale variegato per adattare lo stile di combattimento a ogni nemico." data-en="A varied arsenal to adapt your combat style to each enemy.">Un arsenale variegato per adattare lo stile di combattimento a ogni nemico.</p>
+      </div>
+      <div class="ars">
+        <div class="a-ico">💠</div>
+        <h4 data-it="Frammenti d'Essenza" data-en="Essence Shards">Frammenti d'Essenza</h4>
+        <p data-it="Risorse raccolte dagli Dei liberati, che potenziano le abilità di Theron." data-en="Resources gathered from the freed Gods, empowering Theron's abilities.">Risorse raccolte dagli Dei liberati, che potenziano le abilità di Theron.</p>
+      </div>
+      <div class="ars">
+        <div class="a-ico">🜂</div>
+        <h4 data-it="Rune di Sinergia" data-en="Synergy Runes">Rune di Sinergia</h4>
+        <p data-it="Sigilli che sbloccano e governano la fusione dei poteri elementali." data-en="Sigils that unlock and govern the fusion of elemental powers.">Sigilli che sbloccano e governano la fusione dei poteri elementali.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="f-title">ELYSTRIA — La Fiamma Primordiale</div>
+  <p class="placeholder" data-it="Nome scuola · Classe · Anno scolastico (da inserire)" data-en="School name · Class · School year (to be added)">Nome scuola · Classe · Anno scolastico (da inserire)</p>
+  <p data-it="Progetto realizzato da Ilaria, Martina e Jolanda" data-en="Project created by Ilaria, Martina and Jolanda">Progetto realizzato da Ilaria, Martina e Jolanda</p>
+</footer>
+
+<script>
+  function setLang(lang){
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-it]').forEach(el=>{const t=el.getAttribute('data-'+lang);if(t!==null)el.innerHTML=t});
+    document.getElementById('lang-it').classList.toggle('active',lang==='it');
+    document.getElementById('lang-en').classList.toggle('active',lang==='en');
+  }
+  const header=document.getElementById('header');
+  window.addEventListener('scroll',()=>header.classList.toggle('scrolled',window.scrollY>40));
+  const burger=document.getElementById('burger'),nav=document.getElementById('nav');
+  burger.addEventListener('click',()=>nav.classList.toggle('open'));
+  document.getElementById('dropGioco').querySelector('.dropdown-btn').addEventListener('click',e=>{if(window.innerWidth<=880){e.preventDefault();document.getElementById('dropGioco').classList.toggle('open-mob')}});
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

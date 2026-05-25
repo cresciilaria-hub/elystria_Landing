@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galleria — Elystria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nero:#0a0810;--oro:#e6c068;--oro-chiaro:#f8e4b0;--oro-scuro:#9c7a32;
+    --fiamma:#ffce4d;--testo:#f0ead8;--testo-soft:#c4baa4;--bordo:rgba(230,192,104,0.25);
+    --viola:#8b5cf6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--nero);color:var(--testo);font-family:'Cormorant Garamond',serif;font-size:18px;overflow-x:hidden;line-height:1.6}
+  body.locked{overflow:hidden}
+
+  /* MENU */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 42px;transition:all .4s ease}
+  header.scrolled{background:rgba(10,8,16,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--bordo);padding:12px 42px}
+  .brand{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.18em;color:var(--oro-chiaro);text-decoration:none;text-shadow:0 0 18px rgba(230,192,104,0.4)}
+  nav{display:flex;align-items:center;gap:6px}
+  nav a,.dropdown-btn{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--testo-soft);text-decoration:none;padding:10px 14px;background:none;border:none;cursor:pointer;position:relative;transition:color .3s}
+  nav a:hover,.dropdown-btn:hover,nav a.active,.dropdown-btn.active{color:var(--oro-chiaro)}
+  nav a::after{content:'';position:absolute;left:14px;right:14px;bottom:4px;height:1px;background:var(--oro);transform:scaleX(0);transition:transform .3s}
+  nav a:hover::after,nav a.active::after{transform:scaleX(1)}
+  .dropdown{position:relative}
+  .dropdown-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(13,11,20,0.98);border:1px solid var(--bordo);border-radius:4px;min-width:190px;padding:8px 0;opacity:0;visibility:hidden;transition:all .3s;box-shadow:0 20px 50px rgba(0,0,0,0.6)}
+  .dropdown:hover .dropdown-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(4px)}
+  .dropdown-menu a{display:block;padding:10px 22px;text-align:left}
+  .dropdown-menu a::after{display:none}
+  .dropdown-menu a:hover{background:rgba(230,192,104,0.08)}
+  .lang{display:flex;gap:2px;margin-left:14px;border:1px solid var(--bordo);border-radius:3px;overflow:hidden}
+  .lang button{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.1em;background:none;border:none;color:var(--testo-soft);padding:7px 11px;cursor:pointer;transition:all .25s}
+  .lang button.active{background:var(--oro);color:var(--nero);font-weight:700}
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .burger span{width:26px;height:2px;background:var(--oro-chiaro);transition:.3s}
+
+  /* HERO */
+  .page-hero{position:relative;height:54vh;min-height:380px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+  .page-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center 32%;filter:brightness(.42) saturate(1.05)}
+  .page-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(10,8,16,0.85) 75%),linear-gradient(180deg,rgba(10,8,16,0.7),transparent 40%,rgba(10,8,16,0.95))}
+  .page-hero-inner{position:relative;z-index:2;padding:0 24px}
+  .page-kicker{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.5em;text-transform:uppercase;color:var(--oro-chiaro);margin-bottom:18px;opacity:0;animation:fadeUp 1s ease .2s forwards}
+  .page-title{font-family:'Cinzel',serif;font-weight:800;font-size:clamp(2.6rem,7vw,5rem);color:var(--oro-chiaro);letter-spacing:.04em;text-shadow:0 0 50px rgba(255,206,77,0.4);opacity:0;animation:fadeUp 1s ease .4s forwards}
+  .page-subtitle{font-style:italic;font-size:clamp(1.1rem,2.5vw,1.5rem);color:var(--testo);margin-top:18px;opacity:0;animation:fadeUp 1s ease .6s forwards}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+  /* FILTRI */
+  .filters{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;padding:60px 24px 10px}
+  .filter-btn{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--testo-soft);background:none;border:1px solid var(--bordo);border-radius:30px;padding:9px 20px;cursor:pointer;transition:all .3s}
+  .filter-btn:hover{color:var(--oro-chiaro)}
+  .filter-btn.active{background:var(--oro);color:var(--nero);border-color:var(--oro);font-weight:700}
+
+  /* MASONRY */
+  .gallery{max-width:1280px;margin:0 auto;padding:30px 24px 80px;columns:3;column-gap:18px}
+  .g-item{break-inside:avoid;margin-bottom:18px;position:relative;border-radius:8px;overflow:hidden;border:1px solid var(--bordo);cursor:pointer;display:block}
+  .g-item img{width:100%;display:block;transition:transform 1s ease,filter .4s}
+  .g-item::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,8,16,0.85));opacity:0;transition:opacity .4s}
+  .g-item:hover img{transform:scale(1.06)}
+  .g-item:hover::after{opacity:1}
+  .g-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:18px 20px;opacity:0;transform:translateY(10px);transition:all .4s}
+  .g-item:hover .g-cap{opacity:1;transform:translateY(0)}
+  .g-cap .c-title{font-family:'Cinzel',serif;font-size:1rem;color:var(--oro-chiaro);letter-spacing:.02em}
+  .g-cap .c-cat{font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro)}
+  .g-item.hidden{display:none}
+
+  /* LIGHTBOX */
+  .lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:40px;background:rgba(6,5,10,0.92);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
+  .lightbox.open{opacity:1;visibility:visible}
+  .lb-img{max-width:90vw;max-height:82vh;border-radius:8px;border:1px solid var(--oro);box-shadow:0 40px 120px rgba(0,0,0,0.8),0 0 80px rgba(230,192,104,0.15);transform:scale(.95);transition:transform .4s}
+  .lightbox.open .lb-img{transform:scale(1)}
+  .lb-cap{position:absolute;bottom:30px;left:0;right:0;text-align:center;font-family:'Cinzel',serif;font-size:1rem;color:var(--oro-chiaro);letter-spacing:.04em}
+  .lb-close{position:absolute;top:24px;right:28px;width:46px;height:46px;border-radius:50%;border:1px solid var(--bordo);background:rgba(10,8,16,0.6);color:var(--oro-chiaro);font-size:1.4rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+  .lb-close:hover{background:var(--oro);color:var(--nero);transform:rotate(90deg)}
+  .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:54px;height:54px;border-radius:50%;border:1px solid var(--bordo);background:rgba(10,8,16,0.6);color:var(--oro-chiaro);font-size:1.6rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+  .lb-nav:hover{background:var(--oro);color:var(--nero)}
+  .lb-prev{left:28px}.lb-next{right:28px}
+
+  footer{position:relative;z-index:2;border-top:1px solid var(--bordo);padding:50px 24px 40px;text-align:center;background:rgba(10,8,16,0.7)}
+  footer .f-title{font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.2em;color:var(--oro);margin-bottom:12px}
+  footer p{font-size:.95rem;color:var(--testo-soft);margin:4px 0}
+  footer .placeholder{color:var(--oro-scuro);font-style:italic;opacity:.7}
+
+  @media(max-width:980px){.gallery{columns:2}}
+  @media(max-width:880px){
+    header{padding:14px 20px}
+    nav{position:fixed;top:0;right:-100%;width:78%;max-width:340px;height:100vh;flex-direction:column;align-items:flex-start;gap:0;background:rgba(10,9,16,0.99);backdrop-filter:blur(16px);padding:90px 30px 30px;transition:right .4s ease;border-left:1px solid var(--bordo);overflow-y:auto}
+    nav.open{right:0}
+    nav a,.dropdown-btn{width:100%;padding:14px 0;font-size:.9rem}
+    .dropdown{width:100%}
+    .dropdown-menu{position:static;transform:none;opacity:1;visibility:visible;background:rgba(255,255,255,0.02);border:none;box-shadow:none;max-height:0;overflow:hidden;transition:max-height .3s;padding:0}
+    .dropdown.open-mob .dropdown-menu{max-height:300px;padding:4px 0}
+    .lang{margin:20px 0 0 0}
+    .burger{display:flex;z-index:101}
+    .lb-nav{width:44px;height:44px}.lb-prev{left:10px}.lb-next{right:10px}
+  }
+  @media(max-width:560px){.gallery{columns:1;max-width:440px}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <a href="index.html" class="brand">ELYSTRIA</a>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="nav">
+    <a href="index.html" data-it="Home" data-en="Home">Home</a>
+    <a href="team.html" data-it="Il Team" data-en="The Team">Il Team</a>
+    <a href="progetto.html" data-it="Il Progetto" data-en="The Project">Il Progetto</a>
+    <a href="storia.html" data-it="Storia" data-en="Story">Storia</a>
+    <div class="dropdown" id="dropGioco">
+      <button class="dropdown-btn active" data-it="Il Gioco ▾" data-en="The Game ▾">Il Gioco ▾</button>
+      <div class="dropdown-menu">
+        <a href="personaggi.html" data-it="Personaggi" data-en="Characters">Personaggi</a>
+        <a href="regni.html" data-it="I Regni" data-en="The Realms">I Regni</a>
+        <a href="meccaniche.html" data-it="Meccaniche" data-en="Mechanics">Meccaniche</a>
+        <a href="galleria.html" class="active" data-it="Galleria" data-en="Gallery">Galleria</a>
+      </div>
+    </div>
+    <a href="timeline.html" data-it="Timeline" data-en="Timeline">Timeline</a>
+    <a href="registrati.html" data-it="Registrati" data-en="Sign up">Registrati</a>
+    <a href="shop.html" data-it="Shop" data-en="Shop">Shop</a>
+    <div class="lang">
+      <button id="lang-it" class="active" onclick="setLang('it')">IT</button>
+      <button id="lang-en" onclick="setLang('en')">EN</button>
+    </div>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="page-hero-bg" style="background-image:url(assets/img/ophelia_theron.jpg)"></div>
+  <div class="page-hero-inner">
+    <div class="page-kicker" data-it="Il mondo in immagini" data-en="The world in images">Il mondo in immagini</div>
+    <h1 class="page-title" data-it="Galleria" data-en="Gallery">Galleria</h1>
+    <p class="page-subtitle" data-it="Personaggi, regni e arte di Elystria" data-en="Characters, realms and art of Elystria">Personaggi, regni e arte di Elystria</p>
+  </div>
+</section>
+
+<div class="filters" id="filters">
+  <button class="filter-btn active" data-filter="all" data-it="Tutto" data-en="All">Tutto</button>
+  <button class="filter-btn" data-filter="pers" data-it="Personaggi" data-en="Characters">Personaggi</button>
+  <button class="filter-btn" data-filter="regni" data-it="Regni" data-en="Realms">Regni</button>
+  <button class="filter-btn" data-filter="arte" data-it="Arte &amp; Azione" data-en="Art &amp; Action">Arte &amp; Azione</button>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose" aria-label="Chiudi">✕</button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Precedente">‹</button>
+  <img class="lb-img" id="lbImg" src="" alt="">
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Successivo">›</button>
+  <div class="lb-cap" id="lbCap"></div>
+</div>
+
+<footer>
+  <div class="f-title">ELYSTRIA — La Fiamma Primordiale</div>
+  <p class="placeholder" data-it="Nome scuola · Classe · Anno scolastico (da inserire)" data-en="School name · Class · School year (to be added)">Nome scuola · Classe · Anno scolastico (da inserire)</p>
+  <p data-it="Progetto realizzato da Ilaria, Martina e Jolanda" data-en="Project created by Ilaria, Martina and Jolanda">Progetto realizzato da Ilaria, Martina e Jolanda</p>
+</footer>
+
+<script>
+  /* ===== IMMAGINI GALLERIA ===== */
+  const imgs=[
+    {src:'keyart.jpg', cat:'arte', t:{it:'Key Art',en:'Key Art'}},
+    {src:'ophelia_theron.jpg', cat:'arte', t:{it:'Ophelia e Theron',en:'Ophelia and Theron'}},
+    {src:'theron3.jpg', cat:'pers', t:{it:'Theron',en:'Theron'}},
+    {src:'ophelia.jpg', cat:'pers', t:{it:'Ophelia',en:'Ophelia'}},
+    {src:'zython.jpg', cat:'pers', t:{it:'Zython',en:'Zython'}},
+    {src:'adoria.jpg', cat:'pers', t:{it:'Adoria',en:'Adoria'}},
+    {src:'firyon.jpg', cat:'pers', t:{it:'Firyon',en:'Firyon'}},
+    {src:'gairok.jpg', cat:'pers', t:{it:'Gairok',en:'Gairok'}},
+    {src:'neraya.jpg', cat:'pers', t:{it:'Neraya',en:'Neraya'}},
+    {src:'reg_acqua_corr.jpg', cat:'regni', t:{it:'Tempio Sommerso',en:'Sunken Temple'}},
+    {src:'reg_fuoco_corr.jpg', cat:'regni', t:{it:'Vulcano del Cuore Fuso',en:'Volcano of the Molten Heart'}},
+    {src:'reg_terra_corr.jpg', cat:'regni', t:{it:'Foresta Distorta',en:'Twisted Forest'}},
+    {src:'reg_aria_corr.jpg', cat:'regni', t:{it:'Santuario Sospeso',en:'Suspended Sanctuary'}},
+    {src:'reg_acqua_sana.jpg', cat:'regni', t:{it:'Tempio Sommerso · forma sana',en:'Sunken Temple · pure form'}},
+    {src:'reg_terra_sana.jpg', cat:'regni', t:{it:'Foresta · forma sana',en:'Forest · pure form'}},
+    {src:'azione.jpg', cat:'arte', t:{it:'Scena di combattimento',en:'Combat scene'}},
+    {src:'spade.jpg', cat:'arte', t:{it:'Arsenale',en:'Arsenal'}}
+  ];
+  const catLabel={pers:{it:'Personaggi',en:'Characters'},regni:{it:'Regni',en:'Realms'},arte:{it:'Arte',en:'Art'}};
+  let currentLang='it';
+  let visible=[]; // indici attualmente visibili (per la navigazione lightbox)
+
+  function buildGallery(){
+    const g=document.getElementById('gallery'); g.innerHTML='';
+    imgs.forEach((im,idx)=>{
+      const a=document.createElement('div');
+      a.className='g-item'; a.dataset.cat=im.cat; a.dataset.idx=idx;
+      a.innerHTML=`<img src="assets/img/${im.src}" alt="${im.t[currentLang]}" loading="lazy">
+        <div class="g-cap">
+          <div class="c-cat" data-it="${catLabel[im.cat].it}" data-en="${catLabel[im.cat].en}">${catLabel[im.cat][currentLang]}</div>
+          <div class="c-title" data-it="${im.t.it}" data-en="${im.t.en}">${im.t[currentLang]}</div>
+        </div>`;
+      a.addEventListener('click',()=>openLightbox(idx));
+      g.appendChild(a);
+    });
+    applyFilter('all');
+  }
+
+  function applyFilter(f){
+    visible=[];
+    document.querySelectorAll('.g-item').forEach(it=>{
+      const show = f==='all' || it.dataset.cat===f;
+      it.classList.toggle('hidden',!show);
+      if(show) visible.push(parseInt(it.dataset.idx));
+    });
+  }
+
+  /* LIGHTBOX */
+  const lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg'),lbCap=document.getElementById('lbCap');
+  let curIdx=0;
+  function openLightbox(idx){ curIdx=idx; renderLb(); lb.classList.add('open'); document.body.classList.add('locked'); }
+  function renderLb(){
+    const im=imgs[curIdx];
+    lbImg.src='assets/img/'+im.src; lbImg.alt=im.t[currentLang];
+    lbCap.textContent=im.t[currentLang];
+  }
+  function closeLb(){ lb.classList.remove('open'); document.body.classList.remove('locked'); }
+  function step(dir){
+    if(!visible.length) return;
+    let pos=visible.indexOf(curIdx);
+    pos=(pos+dir+visible.length)%visible.length;
+    curIdx=visible[pos]; renderLb();
+  }
+  document.getElementById('lbClose').addEventListener('click',closeLb);
+  document.getElementById('lbPrev').addEventListener('click',e=>{e.stopPropagation();step(-1);});
+  document.getElementById('lbNext').addEventListener('click',e=>{e.stopPropagation();step(1);});
+  lb.addEventListener('click',e=>{if(e.target===lb)closeLb();});
+  document.addEventListener('keydown',e=>{
+    if(!lb.classList.contains('open'))return;
+    if(e.key==='Escape')closeLb();
+    if(e.key==='ArrowLeft')step(-1);
+    if(e.key==='ArrowRight')step(1);
+  });
+
+  /* FILTRI */
+  document.getElementById('filters').addEventListener('click',e=>{
+    const btn=e.target.closest('.filter-btn'); if(!btn)return;
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilter(btn.dataset.filter);
+  });
+
+  /* MULTILINGUA */
+  function setLang(lang){
+    currentLang=lang;
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-it]').forEach(el=>{const t=el.getAttribute('data-'+lang);if(t!==null)el.innerHTML=t});
+    document.getElementById('lang-it').classList.toggle('active',lang==='it');
+    document.getElementById('lang-en').classList.toggle('active',lang==='en');
+    if(lb.classList.contains('open'))renderLb();
+  }
+
+  /* MENU */
+  const header=document.getElementById('header');
+  window.addEventListener('scroll',()=>header.classList.toggle('scrolled',window.scrollY>40));
+  const burger=document.getElementById('burger'),nav=document.getElementById('nav');
+  burger.addEventListener('click',()=>nav.classList.toggle('open'));
+  document.getElementById('dropGioco').querySelector('.dropdown-btn').addEventListener('click',e=>{if(window.innerWidth<=880){e.preventDefault();document.getElementById('dropGioco').classList.toggle('open-mob')}});
+
+  buildGallery();
+</script>
+</body>
+</html>

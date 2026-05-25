@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline — Elystria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --nero:#0a0810;--oro:#e6c068;--oro-chiaro:#f8e4b0;--oro-scuro:#9c7a32;
+    --fiamma:#ffce4d;--testo:#f0ead8;--testo-soft:#c4baa4;--bordo:rgba(230,192,104,0.25);
+    --viola:#8b5cf6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--nero);color:var(--testo);font-family:'Cormorant Garamond',serif;font-size:18px;overflow-x:hidden;line-height:1.6}
+  body.locked{overflow:hidden}
+
+  /* MENU */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 42px;transition:all .4s ease}
+  header.scrolled{background:rgba(10,8,16,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--bordo);padding:12px 42px}
+  .brand{font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.18em;color:var(--oro-chiaro);text-decoration:none;text-shadow:0 0 18px rgba(230,192,104,0.4)}
+  nav{display:flex;align-items:center;gap:6px}
+  nav a,.dropdown-btn{font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--testo-soft);text-decoration:none;padding:10px 14px;background:none;border:none;cursor:pointer;position:relative;transition:color .3s}
+  nav a:hover,.dropdown-btn:hover,nav a.active,.dropdown-btn.active{color:var(--oro-chiaro)}
+  nav a::after{content:'';position:absolute;left:14px;right:14px;bottom:4px;height:1px;background:var(--oro);transform:scaleX(0);transition:transform .3s}
+  nav a:hover::after,nav a.active::after{transform:scaleX(1)}
+  .dropdown{position:relative}
+  .dropdown-menu{position:absolute;top:100%;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(13,11,20,0.98);border:1px solid var(--bordo);border-radius:4px;min-width:190px;padding:8px 0;opacity:0;visibility:hidden;transition:all .3s;box-shadow:0 20px 50px rgba(0,0,0,0.6)}
+  .dropdown:hover .dropdown-menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(4px)}
+  .dropdown-menu a{display:block;padding:10px 22px;text-align:left}
+  .dropdown-menu a::after{display:none}
+  .dropdown-menu a:hover{background:rgba(230,192,104,0.08)}
+  .lang{display:flex;gap:2px;margin-left:14px;border:1px solid var(--bordo);border-radius:3px;overflow:hidden}
+  .lang button{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.1em;background:none;border:none;color:var(--testo-soft);padding:7px 11px;cursor:pointer;transition:all .25s}
+  .lang button.active{background:var(--oro);color:var(--nero);font-weight:700}
+  .burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+  .burger span{width:26px;height:2px;background:var(--oro-chiaro);transition:.3s}
+
+  /* HERO */
+  .page-hero{position:relative;height:56vh;min-height:400px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+  .page-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center 35%;filter:brightness(.42) saturate(1.05)}
+  .page-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent, rgba(10,8,16,0.85) 75%),linear-gradient(180deg,rgba(10,8,16,0.7),transparent 40%,rgba(10,8,16,0.95))}
+  .page-hero-inner{position:relative;z-index:2;padding:0 24px}
+  .page-kicker{font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.5em;text-transform:uppercase;color:var(--oro-chiaro);margin-bottom:18px;opacity:0;animation:fadeUp 1s ease .2s forwards}
+  .page-title{font-family:'Cinzel',serif;font-weight:800;font-size:clamp(2.6rem,7vw,5rem);color:var(--oro-chiaro);letter-spacing:.04em;text-shadow:0 0 50px rgba(255,206,77,0.4);opacity:0;animation:fadeUp 1s ease .4s forwards}
+  .page-subtitle{font-style:italic;font-size:clamp(1.1rem,2.5vw,1.5rem);color:var(--testo);margin-top:18px;opacity:0;animation:fadeUp 1s ease .6s forwards}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+  .intro{max-width:820px;margin:0 auto;padding:80px 24px 20px;text-align:center}
+  .intro p{font-size:1.2rem;color:var(--testo-soft)}
+  .intro .hint{margin-top:22px;font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--oro-scuro)}
+
+  /* ===== TIMELINE VERTICALE ===== */
+  .timeline{position:relative;max-width:1080px;margin:0 auto;padding:60px 24px 80px}
+  /* linea centrale */
+  .timeline::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:2px;transform:translateX(-50%);background:linear-gradient(180deg,transparent,var(--oro-scuro) 8%,var(--oro) 50%,var(--oro-scuro) 92%,transparent)}
+
+  .tl-item{position:relative;width:50%;padding:22px 48px;box-sizing:border-box}
+  .tl-item.left{left:0;text-align:right}
+  .tl-item.right{left:50%;text-align:left}
+
+  /* nodo sulla linea */
+  .tl-node{position:absolute;top:34px;width:46px;height:46px;border-radius:50%;background:var(--nero);border:2px solid var(--oro);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;font-size:1rem;color:var(--oro-chiaro);z-index:3;box-shadow:0 0 0 6px var(--nero),0 0 22px rgba(230,192,104,.35);transition:all .35s}
+  .tl-item.left .tl-node{right:-23px}
+  .tl-item.right .tl-node{left:-23px}
+
+  /* card cliccabile */
+  .tl-card{display:inline-block;text-align:left;border:1px solid var(--bordo);border-radius:8px;padding:20px 24px;background:rgba(13,11,20,0.6);cursor:pointer;transition:transform .35s,border-color .35s,box-shadow .35s;max-width:420px}
+  .tl-card:hover{transform:translateY(-4px);border-color:var(--oro);box-shadow:0 20px 45px rgba(0,0,0,.5),0 0 35px rgba(230,192,104,.12)}
+  .tl-item:hover .tl-node{transform:scale(1.12);background:var(--oro);color:var(--nero)}
+  .tl-phase{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--oro-scuro);margin-bottom:7px}
+  .tl-title{font-family:'Cinzel',serif;font-weight:700;font-size:1.18rem;color:var(--oro-chiaro);letter-spacing:.02em;line-height:1.2;margin-bottom:9px}
+  .tl-tool{display:inline-block;font-size:.82rem;color:var(--testo-soft);border:1px solid var(--bordo);border-radius:20px;padding:3px 11px;margin-bottom:4px}
+  .tl-more{display:block;margin-top:10px;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--oro)}
+
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity .9s ease,transform .9s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  /* ===== MODALE ===== */
+  .modal-overlay{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:30px 20px;background:rgba(6,5,10,0.82);backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s}
+  .modal-overlay.open{opacity:1;visibility:visible}
+  .modal{position:relative;width:min(620px,100%);max-height:88vh;overflow-y:auto;border:1px solid var(--oro);border-radius:10px;background:linear-gradient(180deg,#12101b,#0a0810);box-shadow:0 40px 120px rgba(0,0,0,0.8),0 0 80px rgba(230,192,104,0.12);padding:44px 44px 40px;transform:translateY(24px) scale(.97);transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+  .modal-overlay.open .modal{transform:translateY(0) scale(1)}
+  .modal-num{font-family:'Cinzel',serif;font-size:3rem;font-weight:800;color:rgba(230,192,104,.18);line-height:1;position:absolute;top:28px;right:34px}
+  .modal-phase{font-family:'Cinzel',serif;font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--oro);margin-bottom:12px}
+  .modal-title{font-family:'Cinzel',serif;font-weight:800;font-size:clamp(1.5rem,3vw,2rem);color:var(--oro-chiaro);line-height:1.1;margin-bottom:14px;padding-right:60px}
+  .modal-tool{display:inline-block;font-size:.85rem;color:var(--testo-soft);border:1px solid var(--bordo);border-radius:20px;padding:5px 14px;margin-bottom:20px}
+  .modal-divider{height:1px;background:linear-gradient(90deg,var(--oro),transparent);margin:0 0 20px}
+  .modal-body p{font-size:1.12rem;color:var(--testo)}
+  .modal-close{position:absolute;top:14px;right:16px;z-index:5;width:40px;height:40px;border-radius:50%;border:1px solid var(--bordo);background:rgba(10,8,16,0.6);color:var(--oro-chiaro);font-size:1.2rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+  .modal-close:hover{background:var(--oro);color:var(--nero);transform:rotate(90deg)}
+
+  footer{position:relative;z-index:2;border-top:1px solid var(--bordo);padding:50px 24px 40px;text-align:center;background:rgba(10,8,16,0.7)}
+  footer .f-title{font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.2em;color:var(--oro);margin-bottom:12px}
+  footer p{font-size:.95rem;color:var(--testo-soft);margin:4px 0}
+  footer .placeholder{color:var(--oro-scuro);font-style:italic;opacity:.7}
+
+  @media(max-width:880px){
+    header{padding:14px 20px}
+    nav{position:fixed;top:0;right:-100%;width:78%;max-width:340px;height:100vh;flex-direction:column;align-items:flex-start;gap:0;background:rgba(10,9,16,0.99);backdrop-filter:blur(16px);padding:90px 30px 30px;transition:right .4s ease;border-left:1px solid var(--bordo);overflow-y:auto}
+    nav.open{right:0}
+    nav a,.dropdown-btn{width:100%;padding:14px 0;font-size:.9rem}
+    .dropdown{width:100%}
+    .dropdown-menu{position:static;transform:none;opacity:1;visibility:visible;background:rgba(255,255,255,0.02);border:none;box-shadow:none;max-height:0;overflow:hidden;transition:max-height .3s;padding:0}
+    .dropdown.open-mob .dropdown-menu{max-height:300px;padding:4px 0}
+    .lang{margin:20px 0 0 0}
+    .burger{display:flex;z-index:101}
+    /* timeline a colonna singola: linea a sinistra */
+    .timeline::before{left:23px}
+    .tl-item,.tl-item.left,.tl-item.right{width:100%;left:0;text-align:left;padding:14px 0 14px 64px}
+    .tl-item.left .tl-node,.tl-item.right .tl-node{left:0;right:auto}
+    .tl-card{max-width:100%}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+
+<header id="header">
+  <a href="index.html" class="brand">ELYSTRIA</a>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="nav">
+    <a href="index.html" data-it="Home" data-en="Home">Home</a>
+    <a href="team.html" data-it="Il Team" data-en="The Team">Il Team</a>
+    <a href="progetto.html" data-it="Il Progetto" data-en="The Project">Il Progetto</a>
+    <a href="storia.html" data-it="Storia" data-en="Story">Storia</a>
+    <div class="dropdown" id="dropGioco">
+      <button class="dropdown-btn" data-it="Il Gioco ▾" data-en="The Game ▾">Il Gioco ▾</button>
+      <div class="dropdown-menu">
+        <a href="personaggi.html" data-it="Personaggi" data-en="Characters">Personaggi</a>
+        <a href="regni.html" data-it="I Regni" data-en="The Realms">I Regni</a>
+        <a href="meccaniche.html" data-it="Meccaniche" data-en="Mechanics">Meccaniche</a>
+        <a href="galleria.html" data-it="Galleria" data-en="Gallery">Galleria</a>
+      </div>
+    </div>
+    <a href="timeline.html" class="active" data-it="Timeline" data-en="Timeline">Timeline</a>
+    <a href="registrati.html" data-it="Registrati" data-en="Sign up">Registrati</a>
+    <a href="shop.html" data-it="Shop" data-en="Shop">Shop</a>
+    <div class="lang">
+      <button id="lang-it" class="active" onclick="setLang('it')">IT</button>
+      <button id="lang-en" onclick="setLang('en')">EN</button>
+    </div>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="page-hero-bg" style="background-image:url(assets/img/azione.jpg)"></div>
+  <div class="page-hero-inner">
+    <div class="page-kicker" data-it="Dietro le quinte" data-en="Behind the scenes">Dietro le quinte</div>
+    <h1 class="page-title" data-it="Timeline" data-en="Timeline">Timeline</h1>
+    <p class="page-subtitle" data-it="Le dieci fasi che hanno dato vita a Elystria" data-en="The ten phases that brought Elystria to life">Le dieci fasi che hanno dato vita a Elystria</p>
+  </div>
+</section>
+
+<section class="intro reveal">
+  <p data-it="Dal primo concetto narrativo fino alla brochure finale: ecco il percorso completo di produzione del progetto, fase per fase." data-en="From the first narrative concept to the final brochure: here is the project's complete production journey, phase by phase.">Dal primo concetto narrativo fino alla brochure finale: ecco il percorso completo di produzione del progetto, fase per fase.</p>
+  <div class="hint" data-it="Clicca su una fase per i dettagli" data-en="Click a phase for details">Clicca su una fase per i dettagli</div>
+</section>
+
+<div class="timeline" id="timeline"></div>
+
+<!-- MODALE -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
+  <div class="modal" id="modalCard">
+    <button class="modal-close" id="modalClose" aria-label="Chiudi">✕</button>
+    <div class="modal-num" id="modalNum"></div>
+    <div class="modal-phase" id="modalPhase"></div>
+    <h2 class="modal-title" id="modalTitle"></h2>
+    <span class="modal-tool" id="modalTool"></span>
+    <div class="modal-divider"></div>
+    <div class="modal-body"><p id="modalDesc"></p></div>
+  </div>
+</div>
+
+<footer>
+  <div class="f-title">ELYSTRIA — La Fiamma Primordiale</div>
+  <p class="placeholder" data-it="Nome scuola · Classe · Anno scolastico (da inserire)" data-en="School name · Class · School year (to be added)">Nome scuola · Classe · Anno scolastico (da inserire)</p>
+  <p data-it="Progetto realizzato da Ilaria, Martina e Jolanda" data-en="Project created by Ilaria, Martina and Jolanda">Progetto realizzato da Ilaria, Martina e Jolanda</p>
+</footer>
+
+<script>
+  /* ===== LE 10 FASI ===== */
+  const fasi = [
+    { tool:{it:'Narrativa',en:'Narrative'},
+      title:{it:'World-building e narrativa',en:'World-building & narrative'},
+      desc:{it:"La creazione del mondo di Elystria: l'Era dell'Armonia, la caduta per mano di Zython, i cinque Dei elementali e il viaggio di Theron. Le fondamenta su cui poggia tutto il progetto.",en:"Creating the world of Elystria: the Era of Harmony, the fall at Zython's hands, the five elemental Gods and Theron's journey. The foundation the whole project rests on."} },
+    { tool:{it:'GDD',en:'GDD'},
+      title:{it:'GDD e testi di gioco',en:'GDD & game texts'},
+      desc:{it:"La stesura del Game Design Document: meccaniche, struttura dei livelli, sistema di combattimento e tutti i testi che definiscono come si gioca a Elystria.",en:"Writing the Game Design Document: mechanics, level structure, combat system and all the texts that define how Elystria plays."} },
+    { tool:{it:'Midjourney',en:'Midjourney'},
+      title:{it:'Generazione dei personaggi',en:'Character generation'},
+      desc:{it:"La creazione visiva di Theron, Ophelia, Zython e dei quattro Dei nelle loro forme sane e corrotte, generati e rifiniti con Midjourney.",en:"The visual creation of Theron, Ophelia, Zython and the four Gods in their pure and corrupted forms, generated and refined with Midjourney."} },
+    { tool:{it:'Concept art',en:'Concept art'},
+      title:{it:'Concept ambientali e prigioni',en:'Environment & prison concepts'},
+      desc:{it:"Il design dei quattro Regni e delle prigioni elementali: Tempio Sommerso, Vulcano del Cuore Fuso, Foresta Distorta e Santuario Sospeso, nelle versioni sana e corrotta.",en:"The design of the four Realms and elemental prisons: Sunken Temple, Volcano of the Molten Heart, Twisted Forest and Suspended Sanctuary, in pure and corrupted versions."} },
+    { tool:{it:'Animazione 2D',en:'2D animation'},
+      title:{it:'Animazione degli asset 2D',en:'2D asset animation'},
+      desc:{it:"Dare movimento agli elementi visivi: effetti, transizioni e animazioni degli asset bidimensionali per dare vita al mondo di gioco.",en:"Bringing the visual elements to life: effects, transitions and animations of the 2D assets to animate the game world."} },
+    { tool:{it:'Premiere',en:'Premiere'},
+      title:{it:'Montaggio del Teaser Trailer',en:'Teaser Trailer editing'},
+      desc:{it:"Il montaggio del teaser trailer in Adobe Premiere: la sintesi cinematografica del progetto, pensata per la presentazione.",en:"Editing the teaser trailer in Adobe Premiere: the cinematic synthesis of the project, designed for the presentation."} },
+    { tool:{it:'Sound design',en:'Sound design'},
+      title:{it:'Sound design',en:'Sound design'},
+      desc:{it:"La cura del comparto sonoro: atmosfere, effetti ed elementi audio che accompagnano l'esperienza e ne rafforzano il tono epico.",en:"Crafting the audio: atmospheres, effects and sound elements that accompany the experience and reinforce its epic tone."} },
+    { tool:{it:'Meshy · STL',en:'Meshy · STL'},
+      title:{it:'Modellazione 3D e stampa fisica',en:'3D modelling & physical print'},
+      desc:{it:"La creazione delle mesh 3D con Meshy e la successiva stampa fisica in formato STL: dal digitale all'oggetto reale.",en:"Creating the 3D meshes with Meshy and the subsequent physical print in STL format: from digital to a real object."} },
+    { tool:{it:'React',en:'React'},
+      title:{it:'Sito promozionale e HUD',en:'Promo site & HUD'},
+      desc:{it:"Lo sviluppo del sito promozionale che stai visitando e dell'interfaccia HUD di gioco realizzata in React.",en:"The development of the promotional site you are visiting and the in-game HUD interface built in React."} },
+    { tool:{it:'QR Code',en:'QR Code'},
+      title:{it:'Brochure cartacea con QR',en:'Printed brochure with QR'},
+      desc:{it:"La brochure cartacea finale con QR Code, che collega il materiale fisico al sito e completa la presentazione del progetto.",en:"The final printed brochure with a QR Code, linking the physical material to the site and completing the project presentation."} }
+  ];
+
+  let currentLang='it';
+  const T={ phase:{it:'Fase',en:'Phase'}, more:{it:'Dettagli ▸',en:'Details ▸'} };
+
+  function buildTimeline(){
+    const tl=document.getElementById('timeline'); tl.innerHTML='';
+    fasi.forEach((f,i)=>{
+      const side = i%2===0 ? 'left' : 'right';
+      const item=document.createElement('div');
+      item.className='tl-item reveal '+side;
+      item.innerHTML=`
+        <div class="tl-node">${i+1}</div>
+        <div class="tl-card">
+          <div class="tl-phase"><span data-it="${T.phase.it}" data-en="${T.phase.en}">${T.phase[currentLang]}</span> ${i+1} / 10</div>
+          <div class="tl-title" data-it="${f.title.it}" data-en="${f.title.en}">${f.title[currentLang]}</div>
+          <span class="tl-tool" data-it="${f.tool.it}" data-en="${f.tool.en}">${f.tool[currentLang]}</span>
+          <span class="tl-more" data-it="${T.more.it}" data-en="${T.more.en}">${T.more[currentLang]}</span>
+        </div>`;
+      item.querySelector('.tl-card').addEventListener('click',()=>openModal(i));
+      tl.appendChild(item);
+    });
+    // riosserva i nuovi elementi reveal
+    document.querySelectorAll('.tl-item.reveal').forEach(el=>io.observe(el));
+  }
+
+  /* MODALE */
+  const modal=document.getElementById('modal');
+  function openModal(i){
+    const f=fasi[i];
+    document.getElementById('modalNum').textContent=String(i+1).padStart(2,'0');
+    const ph=document.getElementById('modalPhase');
+    ph.setAttribute('data-it',`${T.phase.it} ${i+1} di 10`); ph.setAttribute('data-en',`${T.phase.en} ${i+1} of 10`);
+    ph.textContent=`${T.phase[currentLang]} ${i+1} ${currentLang==='it'?'di':'of'} 10`;
+    const ti=document.getElementById('modalTitle');
+    ti.setAttribute('data-it',f.title.it); ti.setAttribute('data-en',f.title.en); ti.textContent=f.title[currentLang];
+    const to=document.getElementById('modalTool');
+    to.setAttribute('data-it',f.tool.it); to.setAttribute('data-en',f.tool.en); to.textContent=f.tool[currentLang];
+    const de=document.getElementById('modalDesc');
+    de.setAttribute('data-it',f.desc.it); de.setAttribute('data-en',f.desc.en); de.textContent=f.desc[currentLang];
+    modal.classList.add('open'); document.body.classList.add('locked');
+  }
+  function closeModal(){ modal.classList.remove('open'); document.body.classList.remove('locked'); }
+  document.getElementById('modalClose').addEventListener('click',closeModal);
+  modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+  /* MULTILINGUA */
+  function setLang(lang){
+    currentLang=lang;
+    document.documentElement.lang=lang;
+    document.querySelectorAll('[data-it]').forEach(el=>{const t=el.getAttribute('data-'+lang);if(t!==null)el.innerHTML=t});
+    document.getElementById('lang-it').classList.toggle('active',lang==='it');
+    document.getElementById('lang-en').classList.toggle('active',lang==='en');
+  }
+
+  /* MENU + REVEAL */
+  const header=document.getElementById('header');
+  window.addEventListener('scroll',()=>header.classList.toggle('scrolled',window.scrollY>40));
+  const burger=document.getElementById('burger'),nav=document.getElementById('nav');
+  burger.addEventListener('click',()=>nav.classList.toggle('open'));
+  document.getElementById('dropGioco').querySelector('.dropdown-btn').addEventListener('click',e=>{if(window.innerWidth<=880){e.preventDefault();document.getElementById('dropGioco').classList.toggle('open-mob')}});
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  buildTimeline();
+</script>
+</body>
+</html>
