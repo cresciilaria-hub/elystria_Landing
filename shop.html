@@ -287,7 +287,7 @@
 
 <footer>
   <div class="f-title">ELYSTRIA — La Fiamma Primordiale</div>
-  <p class="placeholder" data-it="Nome scuola · Classe · Anno scolastico (da inserire)" data-en="School name · Class · School year (to be added)">Nome scuola · Classe · Anno scolastico (da inserire)</p>
+  <p data-it="CFP G. Zanardelli — Anno scolastico 2025/2026" data-en="CFP G. Zanardelli — School year 2025/2026">CFP G. Zanardelli — Anno scolastico 2025/2026</p>
   <p data-it="Progetto realizzato da Ilaria, Martina e Jolanda" data-en="Project created by Ilaria, Martina and Jolanda">Progetto realizzato da Ilaria, Martina e Jolanda</p>
 </footer>
 
@@ -388,24 +388,43 @@
   }
 
   /* ====== CARRELLO ====== */
-  function addToCart(id,btn){
-    cart[id]=(cart[id]||0)+1;
+  // Le chiavi del carrello sono "id" per la forma sana e "id__corr" per la corrotta,
+  // così sana e corrotta sono due righe distinte. resolveItem() ricostruisce i dati
+  // (nome, immagine, prezzo) della forma giusta a partire dalla chiave.
+  function resolveItem(key){
+    const corr = key.endsWith('__corr');
+    const baseId = corr ? key.slice(0, -6) : key;
+    const p = prodotti.find(x=>x.id===baseId);
+    if(!p) return null;
+    const suffix = corr
+      ? (currentLang==='en' ? ' (Corrupted)' : ' (Corrotta)')
+      : '';
+    return {
+      key,
+      prezzo: p.prezzo,
+      img: corr ? p.imgCorrotta : p.img,
+      name: p.name[currentLang] + suffix,
+      role: p.role
+    };
+  }
+
+  function addToCart(key,btn){
+    cart[key]=(cart[key]||0)+1;
     renderCart();
     if(btn){
-      const orig = btn.textContent;
       btn.classList.add('added');
       btn.textContent = T.added[currentLang];
       setTimeout(()=>{btn.classList.remove('added');btn.textContent=T.add[currentLang];},1100);
     }
-    const p = prodotti.find(x=>x.id===id);
-    showToast(p.name[currentLang]+' — '+T.toast[currentLang]);
+    const it = resolveItem(key);
+    if(it) showToast(it.name+' — '+T.toast[currentLang]);
   }
-  function changeQty(id,delta){
-    cart[id]=(cart[id]||0)+delta;
-    if(cart[id]<=0) delete cart[id];
+  function changeQty(key,delta){
+    cart[key]=(cart[key]||0)+delta;
+    if(cart[key]<=0) delete cart[key];
     renderCart();
   }
-  function removeItem(id){ delete cart[id]; renderCart(); }
+  function removeItem(key){ delete cart[key]; renderCart(); }
 
   const cartItems=document.getElementById('cartItems');
   const cartTotal=document.getElementById('cartTotal');
@@ -413,41 +432,42 @@
   const checkoutBtn=document.getElementById('checkoutBtn');
 
   function renderCart(){
-    const ids=Object.keys(cart);
+    const keys=Object.keys(cart);
     let total=0, count=0;
-    if(ids.length===0){
+    if(keys.length===0){
       cartItems.innerHTML=`<div class="cart-empty"><span class="ce-sigil">🔥</span><span data-it="${T.empty.it}" data-en="${T.empty.en}">${T.empty[currentLang]}</span></div>`;
     } else {
       cartItems.innerHTML='';
-      ids.forEach(id=>{
-        const p=prodotti.find(x=>x.id===id);
-        const q=cart[id];
-        total+=p.prezzo*q; count+=q;
+      keys.forEach(key=>{
+        const it=resolveItem(key);
+        if(!it){ delete cart[key]; return; }
+        const q=cart[key];
+        total+=it.prezzo*q; count+=q;
         const row=document.createElement('div');
         row.className='ci';
         row.innerHTML=`
-          <img class="ci-img" src="${p.img}" alt="${p.name[currentLang]}">
+          <img class="ci-img" src="${it.img}" alt="${it.name}">
           <div class="ci-main">
-            <div class="ci-name">${p.name[currentLang]}</div>
-            <div class="ci-role" data-it="${p.role.it}" data-en="${p.role.en}">${p.role[currentLang]}</div>
+            <div class="ci-name">${it.name}</div>
+            <div class="ci-role" data-it="${it.role.it}" data-en="${it.role.en}">${it.role[currentLang]}</div>
             <div class="ci-controls">
               <div class="qty">
-                <button data-act="minus" data-id="${id}" aria-label="-">−</button>
+                <button data-act="minus" data-id="${key}" aria-label="-">−</button>
                 <span>${q}</span>
-                <button data-act="plus" data-id="${id}" aria-label="+">+</button>
+                <button data-act="plus" data-id="${key}" aria-label="+">+</button>
               </div>
-              <button class="ci-remove" data-act="rm" data-id="${id}" data-it="Rimuovi" data-en="Remove">Rimuovi</button>
+              <button class="ci-remove" data-act="rm" data-id="${key}" data-it="Rimuovi" data-en="Remove">Rimuovi</button>
             </div>
           </div>
-          <div class="ci-price">${fmt(p.prezzo*q)}</div>`;
+          <div class="ci-price">${fmt(it.prezzo*q)}</div>`;
         cartItems.appendChild(row);
       });
       cartItems.querySelectorAll('button[data-act]').forEach(b=>{
-        const id=b.getAttribute('data-id'), act=b.getAttribute('data-act');
+        const key=b.getAttribute('data-id'), act=b.getAttribute('data-act');
         b.addEventListener('click',()=>{
-          if(act==='plus')changeQty(id,1);
-          else if(act==='minus')changeQty(id,-1);
-          else removeItem(id);
+          if(act==='plus')changeQty(key,1);
+          else if(act==='minus')changeQty(key,-1);
+          else removeItem(key);
         });
       });
     }
@@ -469,7 +489,7 @@
   /* checkout finto */
   const checkoutModal=document.getElementById('checkoutModal');
   checkoutBtn.addEventListener('click',()=>{
-    let total=0; Object.keys(cart).forEach(id=>{total+=prodotti.find(x=>x.id===id).prezzo*cart[id]});
+    let total=0; Object.keys(cart).forEach(key=>{const it=resolveItem(key); if(it) total+=it.prezzo*cart[key];});
     document.getElementById('cmTotal').textContent=fmt(total);
     closeCart();
     checkoutModal.classList.add('open');
@@ -486,8 +506,10 @@
   const dmtSana=document.getElementById('dmtSana');
   const dmtCorr=document.getElementById('dmtCorr');
   let detailProd=null;
+  let detailCorrotta=false;
 
   function setDetailForm(p, corrotta){
+    detailCorrotta = corrotta;
     document.getElementById('dmImg').src = corrotta ? p.imgCorrotta : p.img;
     document.getElementById('dmImg').alt = p.name[currentLang];
     const tx=document.getElementById('dmText');
@@ -521,7 +543,10 @@
   document.getElementById('dmClose').addEventListener('click',closeDetail);
   detailModal.addEventListener('click',e=>{if(e.target===detailModal)closeDetail();});
   document.getElementById('dmAdd').addEventListener('click',()=>{
-    if(detailProd){addToCart(detailProd.id,document.getElementById('dmAdd'));}
+    if(detailProd){
+      const key = detailCorrotta ? detailProd.id+'__corr' : detailProd.id;
+      addToCart(key,document.getElementById('dmAdd'));
+    }
   });
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail();});
 
